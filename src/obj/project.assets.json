@@ -4430,11 +4430,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\4th Year\\Freelancing-Website\\backend\\src\\src.csproj",
+      "projectUniqueName": "F:\\4th Year\\Freelancing-Website\\src\\src.csproj",
       "projectName": "src",
-      "projectPath": "F:\\4th Year\\Freelancing-Website\\backend\\src\\src.csproj",
+      "projectPath": "F:\\4th Year\\Freelancing-Website\\src\\src.csproj",
       "packagesPath": "C:\\Users\\abohe\\.nuget\\packages\\",
-      "outputPath": "F:\\4th Year\\Freelancing-Website\\backend\\src\\obj\\",
+      "outputPath": "F:\\4th Year\\Freelancing-Website\\src\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\abohe\\AppData\\Roaming\\NuGet\\NuGet.Config",
