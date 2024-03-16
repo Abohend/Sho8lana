@@ -13,7 +13,7 @@ namespace src.Migrations
 {
     [DbContext(typeof(Context))]
     [Migration("20240316121513_V1UserAndFreelancer")]
-    partial class V1UserAndFreelancer
+    partial class V1ClientAndFreelancer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

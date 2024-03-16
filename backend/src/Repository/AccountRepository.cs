@@ -23,28 +23,40 @@ namespace src.Repository
 			return true;
 		}
 
-		public async Task<bool> RegisterAsync(UserRegisterDto userDto)
+		public async Task<IdentityResult> RegisterAsync(UserRegisterDto userDto)
 		{
 			//todo: use Mapping
-			var user = new ApplicationUser{
-				Email = userDto.Email,
-				UserName = userDto.Email,
-				Name = userDto.Name
-			};
-			
+			IdentityResult result;
 			if (userDto.AccountType == AccountType.Freelancer)
 			{
-				var freelancer = user as Freelancer;
-				await _userManager.CreateAsync(user, userDto.Password);
-				await _userManager.AddToRoleAsync(user, AccountType.Freelancer.ToString());
+				var user = new Freelancer
+				{
+					Email = userDto.Email,
+					UserName = userDto.Email,
+					Name = userDto.Name
+				};
+				result = await _userManager.CreateAsync(user, userDto.Password);
+				if (result.Succeeded)
+				{
+					result = await _userManager.AddToRoleAsync(user, AccountType.Freelancer.ToString());
+				}
 			}
 			else 
 			{
-				var client = user as Client;
-				await _userManager.CreateAsync(user, userDto.Password);
-				await _userManager.AddToRoleAsync(user, AccountType.Client.ToString());
+				var user = new ApplicationUser
+				{
+					Email = userDto.Email,
+					UserName = userDto.Email,
+					Name = userDto.Name
+				};
+				result = await _userManager.CreateAsync(user, userDto.Password);
+				if (result.Succeeded)
+				{
+					result = await _userManager.AddToRoleAsync(user, AccountType.Client.ToString());
+				}
 			}
-			return true;
+			
+			return result;
 		}
     }
 }

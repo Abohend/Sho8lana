@@ -51,11 +51,13 @@ namespace src
 				var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 				if (await userManager.FindByEmailAsync(_config["Admin:Email"]!) == null)
 				{
-					await userManager.CreateAsync(new ApplicationUser()
+					var admin = new ApplicationUser()
 					{
 						Email = _config["Admin:Email"],
 						UserName = _config["Admin:Email"]
-					}, _config["Admin:Password"]!);
+					};
+					await userManager.CreateAsync(admin, _config["Admin:Password"]!);
+					await userManager.AddToRoleAsync(admin, "Admin");
 				}
 			}
 			#endregion

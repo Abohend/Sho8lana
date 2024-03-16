@@ -31,6 +31,7 @@ namespace src.Controllers
 			}
 			else
 			{
+				// check unique email
 				try
 				{
 					bool uniqueResult = await _repo.IsUniqueEmailAsync(user.Email);
@@ -44,20 +45,25 @@ namespace src.Controllers
 					return Conflict(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
 				}
 				
+				// check registeration process
 				try
 				{
-					bool result = await _repo.RegisterAsync(user);
-					if (!result)
+					var result = await _repo.RegisterAsync(user);
+					if (!result.Succeeded)
 					{
-						_responce = new Response(StatusCodes.Status400BadRequest, false, ["Email Already Taken"]);
+						List<string> errors = result.Errors
+							.Select(e => e.Description)
+							.ToList();
+						return BadRequest(new Response(StatusCodes.Status400BadRequest, false, errors));
 					}
+					return Ok(new Response(StatusCodes.Status201Created));
 				}
 				catch (Exception ex)
 				{
-					_responce = new Response(StatusCodes.Status400BadRequest, false, [ex.Message]);
+					return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
 				}
 			
-				return Ok(new Response(StatusCodes.Status201Created));
+				
 			}
 		}
 	}

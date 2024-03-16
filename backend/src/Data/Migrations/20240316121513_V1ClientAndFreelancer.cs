@@ -5,7 +5,7 @@
 namespace src.Migrations
 {
     /// <inheritdoc />
-    public partial class V1UserAndFreelancer : Migration
+    public partial class V1ClientAndFreelancer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
