@@ -1,6 +1,22 @@
 [
   {
     "ContainingType": "src.Controllers.AccountController",
+    "Method": "SignIn",
+    "RelativePath": "api/Account",
+    "HttpMethod": "",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "src.Models.Dto.UserSigninDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.AccountController",
     "Method": "Register",
     "RelativePath": "register",
     "HttpMethod": "POST",

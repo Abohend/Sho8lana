@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using src.Models;
 using src.Models.Dto;
@@ -11,14 +12,12 @@ namespace src.Controllers
 	public class AccountController : ControllerBase
 	{
 		private readonly AccountRepository _repo;
-		private Response _responce;
-		public AccountController(AccountRepository repo, Response responce)
+		public AccountController(AccountRepository repo)
         {
 			this._repo = repo;
-			_responce = responce;
 		}
         
-		[HttpPost("/register")]
+		[HttpPost("register")]
 		public async Task<IActionResult> Register(UserRegisterDto user)
 		{
 			// fault entry
@@ -34,7 +33,7 @@ namespace src.Controllers
 				// check unique email
 				try
 				{
-					bool uniqueResult = await _repo.IsUniqueEmailAsync(user.Email);
+					bool uniqueResult = await _repo.EmailExistsAsync(user.Email);
 					if (!uniqueResult)
 					{
 						return Conflict(new Response(StatusCodes.Status400BadRequest, false, ["Email Already Taken"]));
@@ -66,5 +65,32 @@ namespace src.Controllers
 				
 			}
 		}
+
+		[HttpPost("login")]
+		public async Task<IActionResult> SignIn(UserSigninDto user)
+		{
+			if (!ModelState.IsValid)
+			{
+				List<string> errors = ModelState.Root.Errors
+					.Select(e => e.ErrorMessage)
+					.ToList();
+				return BadRequest(new Response(StatusCodes.Status406NotAcceptable,false,errors));
+			}
+			try
+			{
+				string token = await _repo.SiginInAsync(user);
+				if (token == String.Empty)
+				{
+					return Unauthorized(new Response(StatusCodes.Status401Unauthorized, false, ["Sign In Credentials not valid"]));
+				}
+				return Ok(new Response(StatusCodes.Status202Accepted, token));
+			}
+			catch
+			{
+				return Unauthorized(new Response(StatusCodes.Status401Unauthorized, false, ["Unexpected Error!"]));
+			}
+
+		}
+	
 	}
 }

@@ -15,6 +15,12 @@ namespace src.Models
             this.StatusCode = sts;
 			this.IsSuccess = true;
         }
+		public Response(int sts, Object Result)
+        {
+            this.StatusCode = sts;
+			this.IsSuccess = true;
+			this.Result = Result;
+        }
         public int StatusCode { get; set; }
 		public bool IsSuccess { get; set; }
 		public List<string>? Errors { get; set; }
