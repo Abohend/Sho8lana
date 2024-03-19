@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using src.Data;
 using src.Models;
+using src.Models.Dto;
 using src.Repository;
 using System.Text;
 
@@ -88,6 +89,14 @@ namespace src
 				});
 
 			builder.Services.AddAuthorization();
+
+			builder.Services.AddAutoMapper(cfg =>
+			{
+				cfg.CreateMap<UserRegisterDto, Freelancer>()
+					.ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
+				cfg.CreateMap<UserRegisterDto, Client>()
+					.ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
+			});
 
 			#endregion
 

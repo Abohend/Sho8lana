@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using src.Data;
 using src.Models;
@@ -13,11 +14,13 @@ namespace src.Repository
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IConfiguration _config;
+		private readonly IMapper _mapper;
 
-		public AccountRepository(UserManager<ApplicationUser> userManager, IConfiguration config)
+		public AccountRepository(UserManager<ApplicationUser> userManager, IConfiguration config, IMapper mapper)
         {
 			_userManager = userManager;
 			this._config = config;
+			_mapper = mapper;
 		}
 
 		public async Task<bool> EmailExistsAsync(string email)
@@ -32,34 +35,23 @@ namespace src.Repository
 
 		public async Task<IdentityResult> RegisterAsync(UserRegisterDto userDto)
 		{
-			//todo: use Mapping
 			IdentityResult result;
-			if (userDto.AccountType == AccountType.Freelancer)
+			if (userDto.AccountType == AccountType.freelancer.ToString())
 			{
-				var user = new Freelancer
-				{
-					Email = userDto.Email,
-					UserName = userDto.Email,
-					Name = userDto.Name
-				};
+				Freelancer user = _mapper.Map<Freelancer>(userDto);
 				result = await _userManager.CreateAsync(user, userDto.Password);
 				if (result.Succeeded)
 				{
-					result = await _userManager.AddToRoleAsync(user, AccountType.Freelancer.ToString());
+					result = await _userManager.AddToRoleAsync(user, AccountType.freelancer.ToString());
 				}
 			}
 			else 
 			{
-				var user = new ApplicationUser
-				{
-					Email = userDto.Email,
-					UserName = userDto.Email,
-					Name = userDto.Name
-				};
+				Client user = _mapper.Map<Client>(userDto);
 				result = await _userManager.CreateAsync(user, userDto.Password);
 				if (result.Succeeded)
 				{
-					result = await _userManager.AddToRoleAsync(user, AccountType.Client.ToString());
+					result = await _userManager.AddToRoleAsync(user, AccountType.client.ToString());
 				}
 			}
 			

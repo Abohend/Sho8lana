@@ -20,6 +20,11 @@ namespace src.Controllers
 		[HttpPost("register")]
 		public async Task<IActionResult> Register(UserRegisterDto user)
 		{
+			// parsing type
+			if (!Enum.TryParse(user.AccountType.ToLower(), out AccountType accountType))
+			{
+				return BadRequest(new Response(400, false, ["Account Type not valid"]));
+			}
 			// fault entry
 			if (!ModelState.IsValid) 
 			{

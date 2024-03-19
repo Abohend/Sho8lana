@@ -2,8 +2,8 @@
   {
     "ContainingType": "src.Controllers.AccountController",
     "Method": "SignIn",
-    "RelativePath": "api/Account",
-    "HttpMethod": "",
+    "RelativePath": "api/Account/login",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -18,7 +18,7 @@
   {
     "ContainingType": "src.Controllers.AccountController",
     "Method": "Register",
-    "RelativePath": "register",
+    "RelativePath": "api/Account/register",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,

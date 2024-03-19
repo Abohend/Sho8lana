@@ -17,13 +17,13 @@ namespace src.Models.Dto
 		[Compare("Password")]
 		public string? ConfirmPassword { get; set; }
 		
-		public required AccountType AccountType { get; set; }
+		public required string AccountType { get; set; }
 		public required string Name { get; set; }
 	}
 
 	public enum AccountType
 	{
-		Freelancer,
-		Client
+		freelancer,
+		client
 	}
 }
