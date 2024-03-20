@@ -63,6 +63,7 @@ namespace src
 
 			builder.Services.AddScoped<AccountRepository>();
 			builder.Services.AddScoped<Response>();
+			builder.Services.AddScoped<CategoryRepository>();
 
 			builder.Services.AddCors(options =>
 			{
@@ -73,7 +74,12 @@ namespace src
 			});
 
 			builder.Services
-				.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddAuthentication(options =>
+				{
+					options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+					options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+					options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+				})
 				.AddJwtBearer(options =>
 				{
 					options.TokenValidationParameters = new TokenValidationParameters
@@ -89,14 +95,29 @@ namespace src
 				});
 
 			builder.Services.AddAuthorization();
-
-			builder.Services.AddAutoMapper(cfg =>
-			{
-				cfg.CreateMap<UserRegisterDto, Freelancer>()
-					.ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
-				cfg.CreateMap<UserRegisterDto, Client>()
-					.ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
-			});
+			//		builder.Services.AddAuthentication(
+			//options =>
+			//{
+			//	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // authenticate user using jwt
+			//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // redirect to login page
+			//	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // ohter schemes
+			//}).AddJwtBearer(
+			//options =>
+			//{
+			//	options.TokenValidationParameters = new()
+			//	{
+			//		ValidIssuer = _config.GetSection("JWT:Issuer").Value,
+			//		ValidAudience = _config.GetSection("JWT:Audience").Value,
+			//		IssuerSigningKey = new SymmetricSecurityKey
+			//			(Encoding.UTF8.GetBytes(_config.GetSection("JWT:Key").Value!)),
+			//		ValidateIssuer = true,
+			//		ValidateAudience = true,
+			//		ValidateIssuerSigningKey = true,
+			//		ValidateLifetime = true
+			//	};
+			//});
+			builder.Services.AddAuthorization();
+			builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 			#endregion
 

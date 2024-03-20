@@ -232,6 +232,26 @@ namespace src.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("src.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("src.Models.Client", b =>
                 {
                     b.HasBaseType("src.Models.ApplicationUser");
@@ -242,6 +262,11 @@ namespace src.Migrations
             modelBuilder.Entity("src.Models.Freelancer", b =>
                 {
                     b.HasBaseType("src.Models.ApplicationUser");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasDiscriminator().HasValue("Freelancer");
                 });
@@ -295,6 +320,22 @@ namespace src.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("src.Models.Freelancer", b =>
+                {
+                    b.HasOne("src.Models.Category", "Category")
+                        .WithMany("Freelancers")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("src.Models.Category", b =>
+                {
+                    b.Navigation("Freelancers");
                 });
 #pragma warning restore 612, 618
         }

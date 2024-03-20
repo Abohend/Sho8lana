@@ -15,7 +15,7 @@ namespace src.Models
             this.StatusCode = sts;
 			this.IsSuccess = true;
         }
-		public Response(int sts, Object Result)
+		public Response(int sts, Object? Result)
         {
             this.StatusCode = sts;
 			this.IsSuccess = true;
