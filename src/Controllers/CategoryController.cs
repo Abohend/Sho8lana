@@ -21,15 +21,17 @@ namespace src.Controllers
 		}
         // GET: api/<CategoryController>
         [HttpGet]
+		[AllowAnonymous]
 		public IActionResult Get()
 		{
-			try{
+			try
+			{
 				var categories = _categoryRepo.GetAll();
 				return Ok(new Response(200, categories));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 			}
 		}
 
@@ -40,11 +42,19 @@ namespace src.Controllers
 			try
 			{
 				var category = _categoryRepo.Get(id);
-				return Ok(new Response(200, category));
+				if (category == null)
+				{
+					return NotFound(new Response(404, ["Category not found"]));
+				}
+				else
+				{
+					return Ok(new Response(200, category));
+				}
+				
 			}
 			catch(Exception ex)
 			{
-				return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 			}
 		}
 
@@ -59,7 +69,7 @@ namespace src.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message, ex.InnerException!.Message]));
 			}
 		}
 
@@ -74,7 +84,7 @@ namespace src.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 			}
 		}
 
@@ -89,7 +99,7 @@ namespace src.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 			}
 		}
 	}

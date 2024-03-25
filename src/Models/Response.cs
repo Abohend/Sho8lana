@@ -4,22 +4,27 @@ namespace src.Models
 	public class Response
 	{
         public Response() {}
-        public Response(int sts, bool success, List<string> errors)
+		/// <summary>
+		/// Success response
+		/// </summary>
+		/// <param name="stsCode"></param>
+		public Response(int stsCode, Object? result = null)
         {
-            this.StatusCode = sts;
-			this.Result = success;
+            this.StatusCode = stsCode;
+			this.IsSuccess = true;
+			this.Errors = [];
+			this.Result = result;
+        }
+		/// <summary>
+		/// Failed response
+		/// </summary>
+		/// <param name="stsCode"></param>
+		/// <param name="Result"></param>
+		public Response(int stsCode, List<string> errors)
+        {
+            this.StatusCode = stsCode;
+			this.IsSuccess = false;
 			this.Errors = errors;
-        }
-		public Response(int sts)
-        {
-            this.StatusCode = sts;
-			this.IsSuccess = true;
-        }
-		public Response(int sts, Object? Result)
-        {
-            this.StatusCode = sts;
-			this.IsSuccess = true;
-			this.Result = Result;
         }
         public int StatusCode { get; set; }
 		public bool IsSuccess { get; set; }

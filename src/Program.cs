@@ -12,7 +12,7 @@ using System.Text;
 
 namespace src
 {
-	public class Program
+    public class Program
 	{
 		public static async Task Main(string[] args)
 		{
@@ -25,6 +25,7 @@ namespace src
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
+
 			builder.Services.AddSwaggerGen();
 			builder.Services.AddSwaggerGen(c => {
 				c.SwaggerDoc("v1", new OpenApiInfo
@@ -64,6 +65,7 @@ namespace src
 			builder.Services.AddScoped<AccountRepository>();
 			builder.Services.AddScoped<Response>();
 			builder.Services.AddScoped<CategoryRepository>();
+			builder.Services.AddScoped<JobRepository>();
 
 			builder.Services.AddCors(options =>
 			{
@@ -95,28 +97,7 @@ namespace src
 				});
 
 			builder.Services.AddAuthorization();
-			//		builder.Services.AddAuthentication(
-			//options =>
-			//{
-			//	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // authenticate user using jwt
-			//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // redirect to login page
-			//	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // ohter schemes
-			//}).AddJwtBearer(
-			//options =>
-			//{
-			//	options.TokenValidationParameters = new()
-			//	{
-			//		ValidIssuer = _config.GetSection("JWT:Issuer").Value,
-			//		ValidAudience = _config.GetSection("JWT:Audience").Value,
-			//		IssuerSigningKey = new SymmetricSecurityKey
-			//			(Encoding.UTF8.GetBytes(_config.GetSection("JWT:Key").Value!)),
-			//		ValidateIssuer = true,
-			//		ValidateAudience = true,
-			//		ValidateIssuerSigningKey = true,
-			//		ValidateLifetime = true
-			//	};
-			//});
-			builder.Services.AddAuthorization();
+
 			builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 			#endregion

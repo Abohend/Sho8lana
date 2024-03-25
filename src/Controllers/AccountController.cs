@@ -23,7 +23,7 @@ namespace src.Controllers
 			// parsing type
 			if (!Enum.TryParse(user.AccountType.ToLower(), out AccountType accountType))
 			{
-				return BadRequest(new Response(400, false, ["Account Type not valid"]));
+				return BadRequest(new Response(400, ["Account Type not valid"]));
 			}
 			// fault entry
 			if (!ModelState.IsValid) 
@@ -31,22 +31,22 @@ namespace src.Controllers
 				var errors = ModelState.Root.Errors
 					.Select(e => e.ErrorMessage)
 					.ToList();
-				return BadRequest(new Response(400, false, errors));
+				return BadRequest(new Response(400, errors));
 			}
 			else
 			{
 				// check unique email
 				try
 				{
-					bool uniqueResult = await _repo.EmailExistsAsync(user.Email);
+					bool uniqueResult = await _repo.UniqueEmail(user.Email);
 					if (!uniqueResult)
 					{
-						return Conflict(new Response(StatusCodes.Status400BadRequest, false, ["Email Already Taken"]));
+						return Conflict(new Response(StatusCodes.Status400BadRequest, ["Email Already Taken"]));
 					}
 				}
 				catch (Exception ex)
 				{
-					return Conflict(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+					return Conflict(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 				}
 				
 				// check registeration process
@@ -58,13 +58,13 @@ namespace src.Controllers
 						List<string> errors = result.Errors
 							.Select(e => e.Description)
 							.ToList();
-						return BadRequest(new Response(StatusCodes.Status400BadRequest, false, errors));
+						return BadRequest(new Response(StatusCodes.Status400BadRequest, errors));
 					}
 					return Ok(new Response(StatusCodes.Status201Created));
 				}
 				catch (Exception ex)
 				{
-					return BadRequest(new Response(StatusCodes.Status400BadRequest, false, [ex.Message]));
+					return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 				}
 			
 				
@@ -79,20 +79,20 @@ namespace src.Controllers
 				List<string> errors = ModelState.Root.Errors
 					.Select(e => e.ErrorMessage)
 					.ToList();
-				return BadRequest(new Response(StatusCodes.Status406NotAcceptable,false,errors));
+				return BadRequest(new Response(StatusCodes.Status406NotAcceptable, errors));
 			}
 			try
 			{
 				string token = await _repo.SiginInAsync(user);
 				if (token == String.Empty)
 				{
-					return Unauthorized(new Response(StatusCodes.Status401Unauthorized, false, ["Sign In Credentials not valid"]));
+					return Unauthorized(new Response(StatusCodes.Status401Unauthorized, ["Sign In Credentials not valid"]));
 				}
 				return Ok(new Response(StatusCodes.Status202Accepted, token));
 			}
 			catch
 			{
-				return Unauthorized(new Response(StatusCodes.Status401Unauthorized, false, ["Unexpected Error!"]));
+				return Unauthorized(new Response(StatusCodes.Status401Unauthorized, ["Unexpected Error!"]));
 			}
 
 		}

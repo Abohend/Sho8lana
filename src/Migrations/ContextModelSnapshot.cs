@@ -252,6 +252,40 @@ namespace src.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("src.Models.Job", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Jobs");
+                });
+
             modelBuilder.Entity("src.Models.Client", b =>
                 {
                     b.HasBaseType("src.Models.ApplicationUser");
@@ -322,6 +356,46 @@ namespace src.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("src.Models.Job", b =>
+                {
+                    b.HasOne("src.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("src.Models.Client", "Client")
+                        .WithMany("Jobs")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("src.Models.Duration", "ExpectedDuration", b1 =>
+                        {
+                            b1.Property<int>("JobId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Days")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Hours")
+                                .HasColumnType("int");
+
+                            b1.HasKey("JobId");
+
+                            b1.ToTable("Jobs");
+
+                            b1.WithOwner()
+                                .HasForeignKey("JobId");
+                        });
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("ExpectedDuration");
+                });
+
             modelBuilder.Entity("src.Models.Freelancer", b =>
                 {
                     b.HasOne("src.Models.Category", "Category")
@@ -336,6 +410,11 @@ namespace src.Migrations
             modelBuilder.Entity("src.Models.Category", b =>
                 {
                     b.Navigation("Freelancers");
+                });
+
+            modelBuilder.Entity("src.Models.Client", b =>
+                {
+                    b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
         }

@@ -24,9 +24,9 @@ namespace src.Repository
 		}
 		#endregion
 
-		public List<CategoryDto>? GetAll()
+		public List<Category>? GetAll()
 		{
-			return _mapper.Map<List<CategoryDto>>(_db.Categories.ToList());
+			return _db.Categories.ToList();
 		}
 
 		public CategoryDto? Get(int id)

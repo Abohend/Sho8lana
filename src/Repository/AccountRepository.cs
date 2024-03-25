@@ -23,7 +23,7 @@ namespace src.Repository
 			_mapper = mapper;
 		}
 
-		public async Task<bool> EmailExistsAsync(string email)
+		public async Task<bool> UniqueEmail(string email)
 		{
 			var exitedUser = await _userManager.FindByEmailAsync(email);
 			if (exitedUser != null)
