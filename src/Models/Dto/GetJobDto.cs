@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using src.Models.Dto.Category;
 
 namespace src.Models.Dto
 {
-	public class GetJobDto
+    public class GetJobDto
 	{
         public GetJobDto()
         {
@@ -14,7 +15,7 @@ namespace src.Models.Dto
 		public DateTime StartDate { get; set; }
 		public UserDto? ClientDto { get; set; }
 		[Required]
-		public CategoryDto? CategoryDto { get; set; }
+		public GetCategoryDto? CategoryDto { get; set; }
 		
 	}
 }

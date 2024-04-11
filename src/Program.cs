@@ -8,6 +8,7 @@ using src.Data;
 using src.Models;
 using src.Models.Dto;
 using src.Repository;
+using src.Services;
 using System.Text;
 
 namespace src
@@ -66,6 +67,7 @@ namespace src
 			builder.Services.AddScoped<Response>();
 			builder.Services.AddScoped<CategoryRepository>();
 			builder.Services.AddScoped<JobRepository>();
+			builder.Services.AddScoped<ImageService>();
 
 			builder.Services.AddCors(options =>
 			{
@@ -140,6 +142,8 @@ namespace src
 			}
 
 			app.UseHttpsRedirection();
+
+			app.UseStaticFiles();
 
 			app.UseCors("PublicPolicy");
 

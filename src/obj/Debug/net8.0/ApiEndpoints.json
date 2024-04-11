@@ -50,9 +50,14 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "categoryDto",
-        "Type": "src.Models.Dto.CategoryDto",
-        "IsRequired": true
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -87,9 +92,14 @@
         "IsRequired": true
       },
       {
-        "Name": "categoryDto",
-        "Type": "src.Models.Dto.CategoryDto",
-        "IsRequired": true
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

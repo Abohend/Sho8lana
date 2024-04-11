@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "F:\\4th Year\\Freelancing-Website\\src\\wwwroot\\category\\1ad407d9-40b9-4dde-a5c9-010e8fe98d32.jpeg",
+      "PackagePath": "staticwebassets\\category\\1ad407d9-40b9-4dde-a5c9-010e8fe98d32.jpeg"
+    },
+    {
+      "Id": "F:\\4th Year\\Freelancing-Website\\src\\wwwroot\\category\\1c53de59-6541-4861-b973-f6c3d287d34f.jpeg",
+      "PackagePath": "staticwebassets\\category\\1c53de59-6541-4861-b973-f6c3d287d34f.jpeg"
+    },
+    {
+      "Id": "F:\\4th Year\\Freelancing-Website\\src\\wwwroot\\category\\209527ca-00b9-4219-bb59-3916d0e534d4.jpeg",
+      "PackagePath": "staticwebassets\\category\\209527ca-00b9-4219-bb59-3916d0e534d4.jpeg"
+    },
+    {
+      "Id": "F:\\4th Year\\Freelancing-Website\\src\\wwwroot\\category\\23d39a58-ac7f-4df5-bcc5-b47de4d47313.jpeg",
+      "PackagePath": "staticwebassets\\category\\23d39a58-ac7f-4df5-bcc5-b47de4d47313.jpeg"
+    },
+    {
+      "Id": "F:\\4th Year\\Freelancing-Website\\src\\wwwroot\\category\\it4vrahg.pw4.jpeg",
+      "PackagePath": "staticwebassets\\category\\it4vrahg.pw4.jpeg"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.src.props",
+      "PackagePath": "build\\src.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.src.props",
+      "PackagePath": "buildMultiTargeting\\src.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.src.props",
+      "PackagePath": "buildTransitive\\src.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.src.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

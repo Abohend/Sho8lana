@@ -285,3 +285,4 @@ F:\4th Year\Freelancing-Website\src\obj\Debug\net8.0\src.pdb
 F:\4th Year\Freelancing-Website\src\obj\Debug\net8.0\src.genruntimeconfig.cache
 F:\4th Year\Freelancing-Website\src\obj\Debug\net8.0\ref\src.dll
 F:\4th Year\Freelancing-Website\src\bin\Debug\net8.0\AutoMapper.dll
+F:\4th Year\Freelancing-Website\src\bin\Debug\net8.0\src.staticwebassets.runtime.json
