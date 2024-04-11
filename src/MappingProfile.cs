@@ -27,7 +27,8 @@ namespace src
                     Name = src.Client.Name,
                 }: null));
 			CreateMap<CreateJobDto, Job>();
-                
+            CreateMap<Skill, SkillDto>();
+            CreateMap<SkillDto, Skill>();
         }
 
     }

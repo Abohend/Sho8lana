@@ -22,6 +22,21 @@ namespace src.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FreelancerSkill", b =>
+                {
+                    b.Property<string>("FreelancersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SkillsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FreelancersId", "SkillsId");
+
+                    b.HasIndex("SkillsId");
+
+                    b.ToTable("FreelancerSkill");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -293,6 +308,26 @@ namespace src.Migrations
                     b.ToTable("Jobs");
                 });
 
+            modelBuilder.Entity("src.Models.Skill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Skills");
+                });
+
             modelBuilder.Entity("src.Models.Client", b =>
                 {
                     b.HasBaseType("src.Models.ApplicationUser");
@@ -310,6 +345,21 @@ namespace src.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasDiscriminator().HasValue("Freelancer");
+                });
+
+            modelBuilder.Entity("FreelancerSkill", b =>
+                {
+                    b.HasOne("src.Models.Freelancer", null)
+                        .WithMany()
+                        .HasForeignKey("FreelancersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("src.Models.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -12,10 +12,15 @@ namespace src.Data
 		public DbSet<Freelancer> Freelancers {  get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Job> Jobs { get; set; }
+		public DbSet<Skill> Skills { get; set; }
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Category>()
 				.HasIndex(c => c.Name)
+				.IsUnique();
+
+			builder.Entity<Skill>()
+				.HasIndex(s => s.Name)
 				.IsUnique();
 
 			builder.Entity<Job>()
