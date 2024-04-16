@@ -18,6 +18,7 @@ namespace src.Models.Dto
 		public string? ConfirmPassword { get; set; }
 		
 		public required string AccountType { get; set; }
+		public int? CategoryId { get; set; }
 		public required string Name { get; set; }
 	}
 

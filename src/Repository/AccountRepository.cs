@@ -15,12 +15,17 @@ namespace src.Repository
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IConfiguration _config;
 		private readonly IMapper _mapper;
+		private readonly CategoryRepository _categoryRepo;
 
-		public AccountRepository(UserManager<ApplicationUser> userManager, IConfiguration config, IMapper mapper)
+		public AccountRepository(UserManager<ApplicationUser> userManager
+			, IConfiguration config
+			, IMapper mapper
+			, CategoryRepository categoryRepo)
         {
 			_userManager = userManager;
 			this._config = config;
 			_mapper = mapper;
+			this._categoryRepo = categoryRepo;
 		}
 
 		public async Task<bool> UniqueEmail(string email)

@@ -11,10 +11,13 @@ namespace src.Controllers
 	[ApiController]
 	public class AccountController : ControllerBase
 	{
-		private readonly AccountRepository _repo;
-		public AccountController(AccountRepository repo)
+		private readonly AccountRepository _accountRepo;
+		private readonly CategoryRepository _categoryRepo;
+
+		public AccountController(AccountRepository repo, CategoryRepository categoryRepo)
         {
-			this._repo = repo;
+			this._accountRepo = repo;
+			this._categoryRepo = categoryRepo;
 		}
         
 		[HttpPost("register")]
@@ -38,7 +41,7 @@ namespace src.Controllers
 				// check unique email
 				try
 				{
-					bool uniqueResult = await _repo.UniqueEmail(user.Email);
+					bool uniqueResult = await _accountRepo.UniqueEmail(user.Email);
 					if (!uniqueResult)
 					{
 						return Conflict(new Response(StatusCodes.Status400BadRequest, ["Email Already Taken"]));
@@ -48,11 +51,32 @@ namespace src.Controllers
 				{
 					return Conflict(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
 				}
-				
-				// check registeration process
-				try
+
+				// check freelancer's department
+				if (user.AccountType == AccountType.freelancer.ToString())
 				{
-					var result = await _repo.RegisterAsync(user);
+					if (user.CategoryId == null)
+					{
+						return BadRequest(new Response(400, ["Category must be provided for freelancer"]));
+					}
+					else
+					{
+						var category = _categoryRepo.ReadById(user.CategoryId.Value);
+						if (category == null)
+						{
+							return BadRequest(new Response(400, ["Category not found"]));
+						}
+					}
+				}
+				else
+				{
+					user.CategoryId = null;
+				}
+
+				// check registeration process
+					try
+				{
+					var result = await _accountRepo.RegisterAsync(user);
 					if (!result.Succeeded)
 					{
 						List<string> errors = result.Errors
@@ -64,7 +88,7 @@ namespace src.Controllers
 				}
 				catch (Exception ex)
 				{
-					return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
+					return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message, ex.InnerException!.Message]));
 				}
 			
 				
@@ -83,7 +107,7 @@ namespace src.Controllers
 			}
 			try
 			{
-				string token = await _repo.SiginInAsync(user);
+				string token = await _accountRepo.SiginInAsync(user);
 				if (token == String.Empty)
 				{
 					return Unauthorized(new Response(StatusCodes.Status401Unauthorized, ["Sign In Credentials not valid"]));

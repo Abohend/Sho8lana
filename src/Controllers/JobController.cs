@@ -80,7 +80,7 @@ namespace src.Controllers
 				return BadRequest(new Response(400, errors));
 			}
 			// check Category
-			var category = _categoryRepo.Get(jobDto.CategoryId);
+			var category = _categoryRepo.ReadById(jobDto.CategoryId);
 			if (category == null)
 			{
 				return BadRequest(new Response(404, ["Category id is not valid"]));
@@ -111,7 +111,7 @@ namespace src.Controllers
 				return BadRequest(new Response(400, errors));
 			}
 			// check category
-			var category = _categoryRepo.Get(jobDto.CategoryId);
+			var category = _categoryRepo.ReadById(jobDto.CategoryId);
 			if (category == null)
 			{
 				return BadRequest(new Response(404, ["Category id is not valid"]));

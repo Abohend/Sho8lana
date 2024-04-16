@@ -37,7 +37,7 @@ namespace src.Controllers
 		{
 			try
 			{
-				var categories = _categoryRepo.GetAll();
+				var categories = _categoryRepo.ReadAll();
 				var result = categories?
 					.Select(c => new GetCategoryDto
 					{
@@ -61,7 +61,7 @@ namespace src.Controllers
 		{
 			try
 			{
-				var category = _categoryRepo.Get(id);
+				var category = _categoryRepo.ReadById(id);
 				if (category == null)
 				{
 					return NotFound(new Response(404, ["Category not found"]));
