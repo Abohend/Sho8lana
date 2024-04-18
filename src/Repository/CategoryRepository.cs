@@ -34,16 +34,15 @@ namespace src.Repository
 
 		#endregion
 
-		public List<Category>? ReadAll()
+		public List<Category>? GetAll()
 		{
 			return  _db.Categories.ToList();
 		}
 
-		public Category? ReadById(int id)
+		public Category? Get(int id)
 		{
 			return _db.Categories.Find(id);
 		}
-		
 		public void Create(CreateCategoryDto categoryDto)
 		{
 			Category category = _mapper.Map<Category>(categoryDto);

@@ -9,12 +9,14 @@ namespace src
     {
         public MappingProfile()
         {
-            CreateMap<UserRegisterDto, Freelancer>()
+            CreateMap<RegisterClientDto, Client>()
                 .ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
-            CreateMap<UserRegisterDto, Client>()
+            CreateMap<RegisterFreelancerDto, Freelancer>()
                 .ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
+
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, GetCategoryDto>();
+
             CreateMap<Job, GetJobDto>()
                 .ForMember(des => des.CategoryDto, opt => opt.MapFrom(src => (src.Category != null)? new GetCategoryDto
 				{
@@ -27,6 +29,7 @@ namespace src
                     Name = src.Client.Name,
                 }: null));
 			CreateMap<CreateJobDto, Job>();
+
             CreateMap<Skill, SkillDto>();
             CreateMap<SkillDto, Skill>();
         }

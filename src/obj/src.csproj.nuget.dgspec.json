@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\4th Year\\Freelancing-Website\\src\\src.csproj": {}
+    "F:\\Freelancing-Website\\src\\src.csproj": {}
   },
   "projects": {
-    "F:\\4th Year\\Freelancing-Website\\src\\src.csproj": {
+    "F:\\Freelancing-Website\\src\\src.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\4th Year\\Freelancing-Website\\src\\src.csproj",
+        "projectUniqueName": "F:\\Freelancing-Website\\src\\src.csproj",
         "projectName": "src",
-        "projectPath": "F:\\4th Year\\Freelancing-Website\\src\\src.csproj",
+        "projectPath": "F:\\Freelancing-Website\\src\\src.csproj",
         "packagesPath": "C:\\Users\\abohe\\.nuget\\packages\\",
-        "outputPath": "F:\\4th Year\\Freelancing-Website\\src\\obj\\",
+        "outputPath": "F:\\Freelancing-Website\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\abohe\\AppData\\Roaming\\NuGet\\NuGet.Config",

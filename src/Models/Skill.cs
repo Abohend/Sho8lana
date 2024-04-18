@@ -6,4 +6,7 @@
 		public required string Name { get; set; }
 		public List<Freelancer>? Freelancers { get; set; }
 	}
+
+
+	/// freelacer -----------<>----------- Skill
 }

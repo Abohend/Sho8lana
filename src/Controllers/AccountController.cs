@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using src.Models;
@@ -12,99 +13,76 @@ namespace src.Controllers
 	public class AccountController : ControllerBase
 	{
 		private readonly AccountRepository _accountRepo;
+		private readonly IMapper _mapper;
 		private readonly CategoryRepository _categoryRepo;
 
-		public AccountController(AccountRepository repo, CategoryRepository categoryRepo)
+		public AccountController(AccountRepository repo, IMapper mapper, CategoryRepository categoryRepository)
         {
 			this._accountRepo = repo;
-			this._categoryRepo = categoryRepo;
+			this._mapper = mapper;
+			this._categoryRepo = categoryRepository;
 		}
-        
-		[HttpPost("register")]
-		public async Task<IActionResult> Register(UserRegisterDto user)
+
+		[HttpPost("register/client")]
+		public async Task<IActionResult> Register(RegisterClientDto clientDto)
 		{
-			// parsing type
-			if (!Enum.TryParse(user.AccountType.ToLower(), out AccountType accountType))
+			// check email uniqueness
+			bool uniqueResult = await _accountRepo.UniqueEmail(clientDto.Email);
+			if (!uniqueResult)
 			{
-				return BadRequest(new Response(400, ["Account Type not valid"]));
+				return Conflict(new Response(StatusCodes.Status400BadRequest, ["Email Already Taken"]));
 			}
-			// fault entry
-			if (!ModelState.IsValid) 
+
+			var result = await _accountRepo.RegisterClientAsync(_mapper.Map<Client>(clientDto), clientDto.Password);
+
+			if (!result.Succeeded)
 			{
-				var errors = ModelState.Root.Errors
-					.Select(e => e.ErrorMessage)
+				List<string> errors = result.Errors
+					.Select(e => e.Description)
 					.ToList();
-				return BadRequest(new Response(400, errors));
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, errors));
 			}
 			else
 			{
-				// check unique email
-				try
-				{
-					bool uniqueResult = await _accountRepo.UniqueEmail(user.Email);
-					if (!uniqueResult)
-					{
-						return Conflict(new Response(StatusCodes.Status400BadRequest, ["Email Already Taken"]));
-					}
-				}
-				catch (Exception ex)
-				{
-					return Conflict(new Response(StatusCodes.Status400BadRequest, [ex.Message]));
-				}
+				return Ok(new Response(StatusCodes.Status201Created));
+			}
+		}
 
-				// check freelancer's department
-				if (user.AccountType == AccountType.freelancer.ToString())
-				{
-					if (user.CategoryId == null)
-					{
-						return BadRequest(new Response(400, ["Category must be provided for freelancer"]));
-					}
-					else
-					{
-						var category = _categoryRepo.ReadById(user.CategoryId.Value);
-						if (category == null)
-						{
-							return BadRequest(new Response(400, ["Category not found"]));
-						}
-					}
-				}
-				else
-				{
-					user.CategoryId = null;
-				}
+		[HttpPost("register/freelancer")]
+		public async Task<IActionResult> Register(RegisterFreelancerDto freelancerDto)
+		{
+			// check email uniqueness
+			bool uniqueResult = await _accountRepo.UniqueEmail(freelancerDto.Email);
+			if (!uniqueResult)
+			{
+				return Conflict(new Response(StatusCodes.Status400BadRequest, ["Email Already Taken"]));
+			}
 
-				// check registeration process
-					try
-				{
-					var result = await _accountRepo.RegisterAsync(user);
-					if (!result.Succeeded)
-					{
-						List<string> errors = result.Errors
-							.Select(e => e.Description)
-							.ToList();
-						return BadRequest(new Response(StatusCodes.Status400BadRequest, errors));
-					}
-					return Ok(new Response(StatusCodes.Status201Created));
-				}
-				catch (Exception ex)
-				{
-					return BadRequest(new Response(StatusCodes.Status400BadRequest, [ex.Message, ex.InnerException!.Message]));
-				}
-			
-				
+			// check category existance
+			var category = _categoryRepo.Get(freelancerDto.CategoryId);
+			if (category == null)
+			{
+				return BadRequest(new Response(StatusCodes.Status404NotFound, ["Category not found"]));
+			}
+
+			var result = await _accountRepo.RegisterFreelancerAsync(_mapper.Map<Freelancer>(freelancerDto), freelancerDto.Password);
+
+			if (!result.Succeeded)
+			{
+				List<string> errors = result.Errors
+					.Select(e => e.Description)
+					.ToList();
+				return BadRequest(new Response(StatusCodes.Status400BadRequest, errors));
+			}
+			else
+			{
+				return Ok(new Response(StatusCodes.Status201Created));
 			}
 		}
 
 		[HttpPost("login")]
 		public async Task<IActionResult> SignIn(UserSigninDto user)
 		{
-			if (!ModelState.IsValid)
-			{
-				List<string> errors = ModelState.Root.Errors
-					.Select(e => e.ErrorMessage)
-					.ToList();
-				return BadRequest(new Response(StatusCodes.Status406NotAcceptable, errors));
-			}
 			try
 			{
 				string token = await _accountRepo.SiginInAsync(user);

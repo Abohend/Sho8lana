@@ -15,17 +15,12 @@ namespace src.Repository
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IConfiguration _config;
 		private readonly IMapper _mapper;
-		private readonly CategoryRepository _categoryRepo;
 
-		public AccountRepository(UserManager<ApplicationUser> userManager
-			, IConfiguration config
-			, IMapper mapper
-			, CategoryRepository categoryRepo)
+		public AccountRepository(UserManager<ApplicationUser> userManager, IConfiguration config, IMapper mapper)
         {
 			_userManager = userManager;
 			this._config = config;
 			_mapper = mapper;
-			this._categoryRepo = categoryRepo;
 		}
 
 		public async Task<bool> UniqueEmail(string email)
@@ -38,28 +33,23 @@ namespace src.Repository
 			return true;
 		}
 
-		public async Task<IdentityResult> RegisterAsync(UserRegisterDto userDto)
+		public async Task<IdentityResult> RegisterClientAsync(Client client, string password)
 		{
-			IdentityResult result;
-			if (userDto.AccountType == AccountType.freelancer.ToString())
+			var result = await _userManager.CreateAsync(client, password);
+			if (result.Succeeded)
 			{
-				Freelancer user = _mapper.Map<Freelancer>(userDto);
-				result = await _userManager.CreateAsync(user, userDto.Password);
-				if (result.Succeeded)
-				{
-					result = await _userManager.AddToRoleAsync(user, AccountType.freelancer.ToString());
-				}
+				result = await _userManager.AddToRoleAsync(client, "client");
 			}
-			else 
+			return result;
+		}
+
+		public async Task<IdentityResult> RegisterFreelancerAsync(Freelancer freelancer, string password)
+		{
+			var result = await _userManager.CreateAsync(freelancer, password);
+			if (result.Succeeded)
 			{
-				Client user = _mapper.Map<Client>(userDto);
-				result = await _userManager.CreateAsync(user, userDto.Password);
-				if (result.Succeeded)
-				{
-					result = await _userManager.AddToRoleAsync(user, AccountType.client.ToString());
-				}
+				result = await _userManager.AddToRoleAsync(freelancer, "freelancer");
 			}
-			
 			return result;
 		}
     

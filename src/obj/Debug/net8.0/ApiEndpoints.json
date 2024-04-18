@@ -18,14 +18,30 @@
   {
     "ContainingType": "src.Controllers.AccountController",
     "Method": "Register",
-    "RelativePath": "api/Account/register",
+    "RelativePath": "api/Account/register/client",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "user",
-        "Type": "src.Models.Dto.UserRegisterDto",
+        "Name": "clientDto",
+        "Type": "src.Models.Dto.RegisterClientDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.AccountController",
+    "Method": "Register",
+    "RelativePath": "api/Account/register/freelancer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "freelancerDto",
+        "Type": "src.Models.Dto.RegisterFreelancerDto",
         "IsRequired": true
       }
     ],
