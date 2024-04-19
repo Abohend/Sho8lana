@@ -66,7 +66,7 @@ namespace src
 			builder.Services.AddScoped<AccountRepository>();
 			builder.Services.AddScoped<Response>();
 			builder.Services.AddScoped<CategoryRepository>();
-			builder.Services.AddScoped<JobRepository>();
+			builder.Services.AddScoped<ProjectRepository>();
 			builder.Services.AddScoped<ImageService>();
 			builder.Services.AddScoped<SkillRepository>();
 

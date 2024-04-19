@@ -2,6 +2,7 @@
 using src.Models;
 using src.Models.Dto;
 using src.Models.Dto.Category;
+using src.Models.Dto.Project;
 
 namespace src
 {
@@ -17,7 +18,7 @@ namespace src
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, GetCategoryDto>();
 
-            CreateMap<Job, GetJobDto>()
+            CreateMap<Project, GetProjectDto>()
                 .ForMember(des => des.CategoryDto, opt => opt.MapFrom(src => (src.Category != null)? new GetCategoryDto
 				{
                     Id = src.Category.Id,
@@ -28,7 +29,7 @@ namespace src
                     Id = src.ClientId,
                     Name = src.Client.Name,
                 }: null));
-			CreateMap<CreateJobDto, Job>();
+			CreateMap<CreateProjectDto, Project>();
 
             CreateMap<Skill, SkillDto>();
             CreateMap<SkillDto, Skill>();

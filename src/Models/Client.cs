@@ -2,6 +2,6 @@
 {
 	public class Client: ApplicationUser
 	{
-		public List<Job>? Jobs { get; set; }
+		public List<Project>? Projects { get; set; }
 	}
 }

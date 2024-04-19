@@ -274,7 +274,7 @@ namespace src.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("src.Models.Job", b =>
+            modelBuilder.Entity("src.Models.Project", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -305,7 +305,7 @@ namespace src.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Jobs");
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("src.Models.Skill", b =>
@@ -413,7 +413,7 @@ namespace src.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("src.Models.Job", b =>
+            modelBuilder.Entity("src.Models.Project", b =>
                 {
                     b.HasOne("src.Models.Category", "Category")
                         .WithMany()
@@ -422,14 +422,14 @@ namespace src.Migrations
                         .IsRequired();
 
                     b.HasOne("src.Models.Client", "Client")
-                        .WithMany("Jobs")
+                        .WithMany("Projects")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.OwnsOne("src.Models.Duration", "ExpectedDuration", b1 =>
                         {
-                            b1.Property<int>("JobId")
+                            b1.Property<int>("ProjectId")
                                 .HasColumnType("int");
 
                             b1.Property<int>("Days")
@@ -438,12 +438,12 @@ namespace src.Migrations
                             b1.Property<int>("Hours")
                                 .HasColumnType("int");
 
-                            b1.HasKey("JobId");
+                            b1.HasKey("ProjectId");
 
-                            b1.ToTable("Jobs");
+                            b1.ToTable("Projects");
 
                             b1.WithOwner()
-                                .HasForeignKey("JobId");
+                                .HasForeignKey("ProjectId");
                         });
 
                     b.Navigation("Category");
@@ -471,7 +471,7 @@ namespace src.Migrations
 
             modelBuilder.Entity("src.Models.Client", b =>
                 {
-                    b.Navigation("Jobs");
+                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }

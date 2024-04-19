@@ -11,7 +11,7 @@ namespace src.Data
 		public DbSet<Client> Clients { get; set; }
 		public DbSet<Freelancer> Freelancers {  get; set; }
 		public DbSet<Category> Categories { get; set; }
-		public DbSet<Job> Jobs { get; set; }
+		public DbSet<Project> Projects { get; set; }
 		public DbSet<Skill> Skills { get; set; }
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -23,7 +23,7 @@ namespace src.Data
 				.HasIndex(s => s.Name)
 				.IsUnique();
 
-			builder.Entity<Job>()
+			builder.Entity<Project>()
 				.OwnsOne(j => j.ExpectedDuration);
 
 			base.OnModelCreating(builder);
