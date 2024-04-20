@@ -1,13 +1,15 @@
-﻿namespace src.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace src.Models
 {
-	public class Project //TODO: change name to Project
+	public class Project 
 	{
 		public int Id { get; set; }
 		public required string Title { get; set; }
 		public string? Description { get; set; }
 		// TODO: budget
-		public DateTime StartDate { get; private set; } = DateTime.Now; // TODO: Change to CreatedDate
-		public Duration? ExpectedDuration { get; set; } // TODO: make it set by client on updated
+		public DateTime CreatedTime { get; private set; } = DateTime.Now; 
+		public Duration? ExpectedDuration { get; set; } 
 
 		#region relations
 		// TODO: required skills
@@ -15,7 +17,10 @@
 		public Category? Category { get; set; }
 		public required string ClientId {  get; set; }
 		public Client? Client { get; set; }
-		// Todo: Team realtion ship (every Project has a team and every team has one or more Projects)
+		public string? FreelancerId { get; set; }
+		public Freelancer? Freelancer { get; set; }
+		public List<Skill>? Skills { get; set; } = new List<Skill>();
+		// Todo: Team realtion ship (every Project has a team and every team has one Project)
 		// Todo: Payment reationship
 		// Todo: Proposal relationship
 		#endregion
@@ -23,16 +28,19 @@
 	}
 	public class Duration
 	{
+		[Range(0, int.MaxValue)]
+		public int Months { get; set; }
+		[Range(1, 29)]
 		public int Days { get; set; }
-		public int Hours { get; set; }
-		public Duration(int days, int hours)
+		public Duration() { }
+		public Duration(int days, int months)
 		{
 			Days = days;
-			Hours = hours;
+			Months = months;
 		}
 		public override string ToString()
 		{
-			return $"{Days} day(s) {Hours} hour(s)";
+			return $"{Months} Month(s) {Days} day(s)";
 		}
 	}
 

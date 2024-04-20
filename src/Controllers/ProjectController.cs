@@ -19,12 +19,15 @@ namespace src.Controllers
 		private readonly ProjectRepository _projectRepo;
 		private readonly CategoryRepository _categoryRepo;
 		private readonly IMapper _mapper;
+		private readonly SkillRepository _skillRepo;
 
-		public ProjectController(ProjectRepository projectRepo, CategoryRepository categoryRepo, IMapper mapper)
+		public ProjectController(ProjectRepository projectRepo, CategoryRepository categoryRepo, IMapper mapper
+			, SkillRepository skillRepository)
 		{
 			_projectRepo = projectRepo;
 			_categoryRepo = categoryRepo;
 			_mapper = mapper;
+			this._skillRepo = skillRepository;
 		}
 
 		#region Helpers
@@ -45,7 +48,7 @@ namespace src.Controllers
 		{
 			try
 			{
-				List<Project>? projects = _projectRepo.GetAllWithCategoryAndClient();
+				List<Project>? projects = _projectRepo.GetFullData();
 				var projectsDto = _mapper.Map<List<GetProjectDto>?>(projects);
 				return Ok(new Response(200, result: projectsDto));
 			}
@@ -72,13 +75,6 @@ namespace src.Controllers
 		[HttpPost]
 		public IActionResult Post([FromBody] CreateProjectDto projectDto)
 		{
-			if (!ModelState.IsValid)
-			{
-				var errors = ModelState.Root.Errors
-					.Select(e => e.ErrorMessage)
-					.ToList();
-				return BadRequest(new Response(400, errors));
-			}
 			// check Category
 			var category = _categoryRepo.Get(projectDto.CategoryId);
 			if (category == null)
@@ -89,6 +85,18 @@ namespace src.Controllers
 			{
 				var project = _mapper.Map<Project>(projectDto);
 				project.ClientId = GetId();
+				foreach (var skillId in projectDto.RequiredSkillsId!)
+				{
+					var skill = _skillRepo.ReadById(skillId);
+					if (skill != null)
+					{
+						project.Skills!.Add(skill);
+					}
+					else
+					{
+						return BadRequest(new Response(404, ["Enter valid skills"]));
+					}
+				}
 				//ToDo disable automapping for category and assign categoryId here.
 				_projectRepo.Create(project);
 				return Ok(new Response(201));
@@ -103,13 +111,6 @@ namespace src.Controllers
 		[HttpPut("{id}")]
 		public IActionResult Put(int id, [FromBody] CreateProjectDto projectDto)
 		{
-			if (!ModelState.IsValid)
-			{
-				var errors = ModelState.Root.Errors
-					.Select(e => e.ErrorMessage)
-					.ToList();
-				return BadRequest(new Response(400, errors));
-			}
 			// check category
 			var category = _categoryRepo.Get(projectDto.CategoryId);
 			if (category == null)
@@ -118,9 +119,30 @@ namespace src.Controllers
 			}
 			try
 			{
-				var result = _projectRepo.Update(id, projectDto);
+				var project = _mapper.Map<Project>(projectDto);
+
+				if (GetRole() == "Client" && GetId() != project.ClientId)
+				{
+					return Unauthorized(new Response(401, ["Not Allowed to Delete this Project"]));
+				}
+
+				foreach (var skillId in projectDto.RequiredSkillsId!)
+				{
+					var skill = _skillRepo.ReadById(skillId);
+					if (skill != null)
+					{
+						project.Skills!.Add(skill);
+					}
+					else
+					{
+						return BadRequest(new Response(404, ["Enter valid skills"]));
+					}
+				}
+
+				var result = _projectRepo.Update(id, project);
 				if (!result) 
 					return NotFound(new Response(404, ["Project not found"]));
+
 				return Ok(new Response(201));
 			}
 			catch (Exception e)

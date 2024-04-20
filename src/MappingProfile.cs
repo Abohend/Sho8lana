@@ -18,21 +18,15 @@ namespace src
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, GetCategoryDto>();
 
-            CreateMap<Project, GetProjectDto>()
-                .ForMember(des => des.CategoryDto, opt => opt.MapFrom(src => (src.Category != null)? new GetCategoryDto
-				{
-                    Id = src.Category.Id,
-                    Name = src.Category.Name
-                }: null))
-                .ForMember(des => des.ClientDto, opt => opt.MapFrom(src => (src.Client != null)? new UserDto
-                {
-                    Id = src.ClientId,
-                    Name = src.Client.Name,
-                }: null));
-			CreateMap<CreateProjectDto, Project>();
+			CreateMap<Skill, SkillDto>().ReverseMap();
 
-            CreateMap<Skill, SkillDto>();
-            CreateMap<SkillDto, Skill>();
+			CreateMap<Client, UserDto>();
+			CreateMap<Project, GetProjectDto>()
+				.ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
+				.ForMember(dest => dest.Client, opt => opt.MapFrom(src => src.Client))
+                .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => src.Skills));
+            CreateMap<CreateProjectDto, Project>();
+
         }
 
     }

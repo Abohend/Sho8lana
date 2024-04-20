@@ -5,11 +5,9 @@ using src.Models;
 using src.Models.Dto;
 using src.Repository;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace src.Controllers
 {
-	//[Authorize(Roles = "Admin")]
+	[Authorize(Roles = "Admin")]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class SkillController : ControllerBase
@@ -22,7 +20,8 @@ namespace src.Controllers
 			this._mapper = mapper;
 			this._skillRepo = skillRepo;
 		}
-        // GET: api/<SkillController>
+		// GET: api/<SkillController>
+		[AllowAnonymous]
         [HttpGet]
 		public IActionResult Get()
 		{
@@ -31,13 +30,14 @@ namespace src.Controllers
 		}
 
 		// GET api/<SkillController>/5
+		[AllowAnonymous]
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
 			var skill = _mapper.Map<SkillDto>(_skillRepo.ReadById(id));
 			if (skill != null)
 				return Ok(new Response(200, skill));
-			return Ok(new Response(404, "Skill not found"));
+			return BadRequest(new Response(404, "Skill not found"));
 		}
 
 		// POST api/<SkillController>
@@ -51,7 +51,7 @@ namespace src.Controllers
 			}
 			else
 			{
-				return Ok(new Response(400, ["Skill already exists"]));
+				return BadRequest(new Response(400, ["Skill already exists"]));
 			}
 		}
 
@@ -68,7 +68,7 @@ namespace src.Controllers
 			}
 			else
 			{
-				return Ok(new Response(404, ["Skill not found"]));
+				return BadRequest(new Response(404, ["Skill not found"]));
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace src.Controllers
 			}
 			else
 			{
-				return Ok(new Response(404, ["Skill not found"]));
+				return BadRequest(new Response(404, ["Skill not found"]));
 			}
 		}   
 	}

@@ -14,16 +14,21 @@ namespace src.Repository
         {
 			_db = db;
 		}
-        public List<Project>? GetAllWithCategoryAndClient()
+        public List<Project>? GetFullData()
 		{
 			return _db.Projects
 				.Include(j => j.Category)
 				.Include(j => j.Client)
+				.Include(p => p.Skills)
 				.ToList();
 		}
 		public Project? Get(int id)
 		{
 			return _db.Projects.FirstOrDefault(j => j.Id == id);
+		}
+		public Project? GetWithSkills(int id)
+		{
+			return _db.Projects.Include(j => j.Skills).SingleOrDefault(p => p.Id == id);
 		}
 		public Project? GetWithCategoryAndClient(int id)
 		{
@@ -44,14 +49,25 @@ namespace src.Repository
 		/// <param name="id"></param>
 		/// <param name="newProject"></param>
 		/// <returns></returns>
-		public bool Update(int id, CreateProjectDto newProject)
+		public bool Update(int id, Project newProject)
 		{
-			Project? project = Get(id);
+			Project? project = GetWithSkills(id);
 			if (project != null)
 			{
 				project.Title = newProject.Title;
 				project.Description = newProject.Description;
 				project.CategoryId = newProject.CategoryId;
+				if (newProject.Skills != null)
+				{
+					project.Skills = new List<Skill>();
+					foreach(var skill in newProject.Skills)
+					{
+						if (!project.Skills.Contains(skill))
+						{
+							project.Skills.Add(skill);
+						}
+					}
+				}
 				_db.SaveChanges();
 				return true;
 			}

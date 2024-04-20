@@ -9,6 +9,7 @@ namespace src.Models
 		public required string Name { get; set; }
 		public required string ImagePath { get; set; }
 		public List<Freelancer>? Freelancers { get; set; }
-		//public List<Job>? Jobs { get; set; }
+		public List<Project>? Projects { get; set; }
+
 	}
 }

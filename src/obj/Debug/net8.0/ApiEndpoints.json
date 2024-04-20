@@ -137,9 +137,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "src.Controllers.JobController",
+    "ContainingType": "src.Controllers.ProjectController",
     "Method": "Get",
-    "RelativePath": "api/Job",
+    "RelativePath": "api/Project",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -147,25 +147,25 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "src.Controllers.JobController",
+    "ContainingType": "src.Controllers.ProjectController",
     "Method": "Post",
-    "RelativePath": "api/Job",
+    "RelativePath": "api/Project",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "jobDto",
-        "Type": "src.Models.Dto.CreateJobDto",
+        "Name": "projectDto",
+        "Type": "src.Models.Dto.Project.CreateProjectDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "src.Controllers.JobController",
+    "ContainingType": "src.Controllers.ProjectController",
     "Method": "Get",
-    "RelativePath": "api/Job/{id}",
+    "RelativePath": "api/Project/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -179,9 +179,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "src.Controllers.JobController",
+    "ContainingType": "src.Controllers.ProjectController",
     "Method": "Put",
-    "RelativePath": "api/Job/{id}",
+    "RelativePath": "api/Project/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -192,17 +192,17 @@
         "IsRequired": true
       },
       {
-        "Name": "jobDto",
-        "Type": "src.Models.Dto.CreateJobDto",
+        "Name": "projectDto",
+        "Type": "src.Models.Dto.Project.CreateProjectDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "src.Controllers.JobController",
+    "ContainingType": "src.Controllers.ProjectController",
     "Method": "Delete",
-    "RelativePath": "api/Job/{id}",
+    "RelativePath": "api/Project/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
