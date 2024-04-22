@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Protocol;
+using src.Controllers;
 using src.Data;
 using src.Models;
 using src.Models.Dto;
+using src.Models.Dto.Client;
+using src.Models.Dto.Freelancer;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,13 +18,11 @@ namespace src.Repository
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IConfiguration _config;
-		private readonly IMapper _mapper;
 
-		public AccountRepository(UserManager<ApplicationUser> userManager, IConfiguration config, IMapper mapper)
+		public AccountRepository(UserManager<ApplicationUser> userManager, IConfiguration config)
         {
 			_userManager = userManager;
 			this._config = config;
-			_mapper = mapper;
 		}
 
 		public async Task<bool> UniqueEmail(string email)
@@ -53,7 +55,7 @@ namespace src.Repository
 			return result;
 		}
     
-		public async Task<string> SiginInAsync(UserSigninDto userDto)
+		public async Task<Dictionary<string, object>?> SiginInAsync(UserSigninDto userDto)
 		{
 			var user = await _userManager.FindByEmailAsync(userDto.Email);
 			if (user != null)
@@ -79,10 +81,15 @@ namespace src.Repository
 						claims: claims
 					);
 					var serliazedToken = new JwtSecurityTokenHandler().WriteToken(token);
-					return serliazedToken;
+
+					var loginResponse = new Dictionary<string, object>();
+					loginResponse["token"] = serliazedToken;
+					loginResponse["role"] = role?? "";
+					loginResponse["Id"] = user.Id;
+					return loginResponse;
 				}
 			}
-			return String.Empty;
+			return null;
 		}
 	}
 }

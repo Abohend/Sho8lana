@@ -24,9 +24,11 @@ namespace src.Controllers
 		}
 
 		#region Helpers
-		private string GetImageUrl(string path)
+		private string? GetImageUrl(string path)
 		{
-			return $"{Request.Scheme}://{Request.Host}/{path}";
+			if (path != null)
+				return $"{Request.Scheme}://{Request.Host}/{path}";
+			return null;
 		}
 		#endregion
 

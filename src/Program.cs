@@ -69,6 +69,8 @@ namespace src
 			builder.Services.AddScoped<ProjectRepository>();
 			builder.Services.AddScoped<ImageService>();
 			builder.Services.AddScoped<SkillRepository>();
+			builder.Services.AddScoped<ClientRepository>();
+			builder.Services.AddScoped<FreelancerRepository>();
 
 			builder.Services.AddCors(options =>
 			{

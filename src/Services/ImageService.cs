@@ -12,35 +12,44 @@ namespace src.Services
 		}
 
 		#region Helpers
-		private string GetImagePath(IFormFile img)
+		private string GetImageName(IFormFile img)
 		{
-			return $"category/{Guid.NewGuid().ToString()}{Path.GetExtension(img.FileName)}";
+			return $"{Guid.NewGuid().ToString()}{Path.GetExtension(img.FileName)}";
 		}
-		private string GetFilePath(string imagePath)
+		private string GetFolderPath(string folderName)
 		{
-			return $"{_webHostEnvironment.WebRootPath}/{imagePath}";
+			return Path.Combine(_webHostEnvironment.WebRootPath, folderName);
 		}
 		#endregion
 
-		public string UploadImage(IFormFile image)
+		public string UploadImage(string folderName, IFormFile image)
 		{
-			var imagePath = GetImagePath(image);
-			var filePath = GetFilePath(imagePath);
+			var folderPath = GetFolderPath(folderName);
+			var imageName = GetImageName(image);
+			var imagePath = Path.Combine(folderPath, imageName);
+			
+			if (!Directory.Exists(folderPath))
+			{
+				Directory.CreateDirectory(folderPath);
+			}
 
-			using (var fileStream = new FileStream(filePath, FileMode.Create))
+			using (var fileStream = new FileStream(imagePath, FileMode.Create))
 			{
 				image.CopyTo(fileStream);
 			}
 
-			return imagePath;
+			return Path.Combine(folderName, imageName);
 		}
-	
-		public void DeleteImage(string imgPath)
+
+		public void DeleteImage(string? imgPath)
 		{
-			var filePath = GetFilePath(imgPath);
-			if (File.Exists(filePath))
+			if (imgPath != null)
 			{
-				File.Delete(filePath);
+				var filePath = GetFolderPath(imgPath);
+				if (File.Exists(filePath))
+				{
+					File.Delete(filePath);
+				}
 			}
 		}
 	}

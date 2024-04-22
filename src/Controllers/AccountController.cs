@@ -85,12 +85,12 @@ namespace src.Controllers
 		{
 			try
 			{
-				string token = await _accountRepo.SiginInAsync(user);
-				if (token == String.Empty)
+				var loginResponse = await _accountRepo.SiginInAsync(user);
+				if (loginResponse == null)
 				{
 					return Unauthorized(new Response(StatusCodes.Status401Unauthorized, ["Sign In Credentials not valid"]));
 				}
-				return Ok(new Response(StatusCodes.Status202Accepted, token));
+				return Ok(new Response(StatusCodes.Status202Accepted, loginResponse));
 			}
 			catch
 			{

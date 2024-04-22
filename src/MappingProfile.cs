@@ -2,6 +2,8 @@
 using src.Models;
 using src.Models.Dto;
 using src.Models.Dto.Category;
+using src.Models.Dto.Client;
+using src.Models.Dto.Freelancer;
 using src.Models.Dto.Project;
 
 namespace src
@@ -15,18 +17,24 @@ namespace src
             CreateMap<RegisterFreelancerDto, Freelancer>()
                 .ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
 
+            CreateMap<Client, GetClientDto>()
+                .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath))
+                .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)));
+            CreateMap<UpdateClientDto, Client>();
+
+            CreateMap<Freelancer, GetFreelancerDto>()
+                .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath))
+                .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)));
+            CreateMap<UpdateFreelancerDto, Freelancer>();
+
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, GetCategoryDto>();
 
 			CreateMap<Skill, SkillDto>().ReverseMap();
 
 			CreateMap<Client, UserDto>();
-			CreateMap<Project, GetProjectDto>()
-				.ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
-				.ForMember(dest => dest.Client, opt => opt.MapFrom(src => src.Client))
-                .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => src.Skills));
+            CreateMap<Project, GetProjectDto>();
             CreateMap<CreateProjectDto, Project>();
-
         }
 
     }

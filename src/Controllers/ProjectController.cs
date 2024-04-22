@@ -81,11 +81,12 @@ namespace src.Controllers
 			{
 				return BadRequest(new Response(404, ["Category id is not valid"]));
 			}
-			try
+
+			var project = _mapper.Map<Project>(projectDto);
+			project.ClientId = GetId();
+			if (projectDto.RequiredSkillsId != null)
 			{
-				var project = _mapper.Map<Project>(projectDto);
-				project.ClientId = GetId();
-				foreach (var skillId in projectDto.RequiredSkillsId!)
+				foreach (var skillId in projectDto.RequiredSkillsId)
 				{
 					var skill = _skillRepo.ReadById(skillId);
 					if (skill != null)
@@ -97,14 +98,10 @@ namespace src.Controllers
 						return BadRequest(new Response(404, ["Enter valid skills"]));
 					}
 				}
-				//ToDo disable automapping for category and assign categoryId here.
-				_projectRepo.Create(project);
-				return Ok(new Response(201));
 			}
-			catch (Exception e)
-			{
-				return BadRequest(new Response(400, [e.Message, e.InnerException!.Message]));
-			}
+			//ToDo disable automapping for category and assign categoryId here.
+			_projectRepo.Create(project);
+			return Ok(new Response(201));
 		}
 
 		// PUT api/<ProjectController>/5

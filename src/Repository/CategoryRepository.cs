@@ -47,7 +47,7 @@ namespace src.Repository
 		{
 			Category category = _mapper.Map<Category>(categoryDto);
 			if (categoryDto.Image != null)
-				category.ImagePath = _imageService.UploadImage(categoryDto.Image);
+				category.ImagePath = _imageService.UploadImage("category", categoryDto.Image);
 			_db.Add(category);
 			_db.SaveChanges();
 		}
@@ -59,9 +59,9 @@ namespace src.Repository
 				if (categoryDto.Image != null)
 				{
 					_imageService.DeleteImage(category.ImagePath);
-					category.ImagePath = _imageService.UploadImage(categoryDto.Image);
+					category.ImagePath = _imageService.UploadImage("category", categoryDto.Image);
 				}
-				category.Name = categoryDto.Name;
+				category.Name = categoryDto.Name?? category.Name;
 				_db.SaveChanges();	
 			}
 		}
