@@ -9,6 +9,7 @@ namespace src.Models.Dto.Client
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }
         public string? PhoneNumber { get; set; }
+        public decimal? Balance { get; set; }
         public List<int>? ProjectsId { get; set; }
 
     }
