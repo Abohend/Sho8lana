@@ -13,6 +13,7 @@ namespace src.Data
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Project> Projects { get; set; }
 		public DbSet<Skill> Skills { get; set; }
+		public DbSet<ProjectProposal> ProjectsProposal { get; set; }
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Category>()

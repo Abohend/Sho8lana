@@ -71,6 +71,7 @@ namespace src
 			builder.Services.AddScoped<SkillRepository>();
 			builder.Services.AddScoped<ClientRepository>();
 			builder.Services.AddScoped<FreelancerRepository>();
+			builder.Services.AddScoped<ProjectProposalRepository>();
 
 			builder.Services.AddCors(options =>
 			{

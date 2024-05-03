@@ -14,5 +14,7 @@ namespace src.Models
 		// TODO: TeammemberRating = 70% client + 30% team members
 		public List<Project>? Projects { get; set; }
 
+		public List<ProjectProposal>? ProjectsProposal { get; set; }
+
 	}
 }

@@ -153,7 +153,7 @@ namespace src.Controllers
 		[HttpDelete("{id}")]
 		public IActionResult Delete(int id)
 		{
-			var project = _projectRepo.Get(id);
+			var project = _projectRepo.Read(id);
 			if (project == null)
 			{
 				return NotFound(new Response(404, ["Project not found"]));

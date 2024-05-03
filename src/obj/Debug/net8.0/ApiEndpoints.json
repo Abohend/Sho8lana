@@ -372,6 +372,91 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "src.Controllers.ProjectProposalController",
+    "Method": "Post",
+    "RelativePath": "api/ProjectProposal",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "projectProposalDto",
+        "Type": "src.Models.Dto.ProjectProposal.CreateProjectProposalDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.ProjectProposalController",
+    "Method": "Get",
+    "RelativePath": "api/ProjectProposal/{freelancerId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "freelancerId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.ProjectProposalController",
+    "Method": "Put",
+    "RelativePath": "api/ProjectProposal/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "src.Models.Dto.ProjectProposal.RespondProjectProposalDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.ProjectProposalController",
+    "Method": "Delete",
+    "RelativePath": "api/ProjectProposal/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.ProjectProposalController",
+    "Method": "Get",
+    "RelativePath": "api/ProjectProposal/{projectId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "projectId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "src.Controllers.SkillController",
     "Method": "Get",
     "RelativePath": "api/Skill",

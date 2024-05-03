@@ -22,7 +22,7 @@ namespace src.Repository
 				.Include(p => p.Skills)
 				.ToList();
 		}
-		public Project? Get(int id)
+		public Project? Read(int id)
 		{
 			return _db.Projects.FirstOrDefault(j => j.Id == id);
 		}
@@ -80,7 +80,7 @@ namespace src.Repository
 		/// <returns></returns>
 		public bool Delete(int id)
 		{
-			var project = Get(id);
+			var project = Read(id);
 			if (project != null)
 			{
 				_db.Remove(project);
