@@ -293,6 +293,75 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "src.Controllers.JobController",
+    "Method": "Get",
+    "RelativePath": "api/Job/{freelancerId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "freelancerId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.JobController",
+    "Method": "Delete",
+    "RelativePath": "api/Job/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.JobController",
+    "Method": "Get",
+    "RelativePath": "api/Job/{projectId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "projectId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "src.Controllers.JobController",
+    "Method": "Post",
+    "RelativePath": "api/Job/{projectId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "projectId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "JobsDto",
+        "Type": "System.Collections.Generic.List\u00601[[src.Models.Dto.Job.CreateJobDto, src, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "src.Controllers.ProjectController",
     "Method": "Get",
     "RelativePath": "api/Project",
