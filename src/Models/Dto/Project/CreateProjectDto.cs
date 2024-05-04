@@ -9,5 +9,6 @@ namespace src.Models.Dto.Project
         public required int CategoryId { get; set; }
         public List<int>? RequiredSkillsId { get; set; }
         public Duration? ExpectedDuration { get; set; }
-    }
+		public decimal? ExpectedBudget { get; set; }
+	}
 }

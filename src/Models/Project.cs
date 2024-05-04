@@ -7,7 +7,7 @@ namespace src.Models
 		public int Id { get; set; }
 		public required string Title { get; set; }
 		public string? Description { get; set; }
-		// TODO: budget
+		public decimal? ExpectedBudget { get; set; }
 		public DateTime CreatedTime { get; private set; } = DateTime.Now; 
 		public Duration? ExpectedDuration { get; set; } 
 
@@ -28,7 +28,7 @@ namespace src.Models
 	}
 	public class Duration
 	{
-		[Range(0, int.MaxValue)]
+		[Range(0, 120)]
 		public int Months { get; set; }
 		[Range(1, 29)]
 		public int Days { get; set; }

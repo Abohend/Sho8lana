@@ -11,6 +11,7 @@ namespace src.Models.Dto.Project
         public required string Title { get; set; }
         public string? Description { get; set; }
         public DateTime StartDate { get; set; }
+		public decimal? ExpectedBudget { get; set; }
 		public Duration? ExpectedDuration { get; set; }
 		public UserDto? Client { get; set; }
 		public GetCategoryDto? Category { get; set; }
