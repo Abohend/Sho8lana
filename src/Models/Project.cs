@@ -20,9 +20,9 @@ namespace src.Models
 		public string? FreelancerId { get; set; }
 		public Freelancer? Freelancer { get; set; }
 		public List<Skill>? Skills { get; set; } = new List<Skill>();
+		public List<ProjectProposal>? Proposals { get; set; }
 		// Todo: Team realtion ship (every Project has a team and every team has one Project)
 		// Todo: Payment reationship
-		// Todo: Proposal relationship
 		#endregion
 
 	}

@@ -1,3 +1,8 @@
 ﻿.vs/
+<<<<<<< HEAD
 bin/
 obj/
+=======
+obj/
+bin/
+>>>>>>> projectProposal
