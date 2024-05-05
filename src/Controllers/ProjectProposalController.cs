@@ -14,6 +14,7 @@ namespace src.Controllers
 	{
 		private readonly ProjectProposalRepository _projectProposalRepo;
 		private readonly ProjectRepository _projectRepo;
+		private readonly ClientRepository _clientRepo;
 
 		#region Helpers
 		private string GetId()
@@ -23,10 +24,12 @@ namespace src.Controllers
 		#endregion
 
 		public ProjectProposalController(ProjectProposalRepository projectProposalRepository,
-			ProjectRepository projectRepository)
+			ProjectRepository projectRepository,
+			ClientRepository clientRepository)
         {
 			this._projectProposalRepo = projectProposalRepository;
 			this._projectRepo = projectRepository;
+			this._clientRepo = clientRepository;
 		}
 
         // GET api/<ProjectProposalController>/5
@@ -77,18 +80,38 @@ namespace src.Controllers
 		[HttpPut("{id}")]
 		public IActionResult Put(int id, [FromBody] RespondProjectProposalDto dto)
 		{
-			// check if clientId == proposal.Project.ClientId
+			// validation for proposalId
 			var proposal = _projectProposalRepo.Read(id);
 			if (proposal == null)
 			{
 				return NotFound(new Response(404, ["Proposal Id is invalid"]));
 			}
+
+			// only pending proposal could be modified
+			if (proposal.IsAccepted != null)
+			{
+				return BadRequest(new Response(401, ["You already responded to this proposal"]));
+			}
+
+			// check if clientId == proposal.Project.ClientId
 			var clientId = _projectRepo.Read(proposal.ProjectId)!.ClientId;
 			if (GetId() != clientId)
 			{
 				return BadRequest(new Response(401, ["Not authorized to respond to this proposal"]));
 			}
 
+			//TODO: Payment "current is simple"
+			var client = _clientRepo.Read(clientId);
+			if (dto.IsAccepted == true)
+			{
+				if (client!.Balance < proposal.OfferedPrice)
+				{
+					return BadRequest(new Response(401, ["Cann't complete operation due insufficient Balance"]));
+				}
+				client.Balance -= proposal.OfferedPrice;
+				// ToDo: Think of approach to release this payment to freelancer when the project is compeleted
+			}
+			
 			_projectProposalRepo.UpdateByClient(id, dto);
 			return Ok(new Response(201));
 		}
