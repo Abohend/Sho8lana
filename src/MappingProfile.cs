@@ -4,6 +4,7 @@ using src.Models.Dto;
 using src.Models.Dto.Category;
 using src.Models.Dto.Client;
 using src.Models.Dto.Freelancer;
+using src.Models.Dto.Job;
 using src.Models.Dto.Project;
 using src.Models.Dto.ProjectProposal;
 
@@ -25,7 +26,8 @@ namespace src
 
             CreateMap<Freelancer, GetFreelancerDto>()
                 .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath))
-                .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)));
+                .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)))
+                .ForMember(des => des.JobsId, opt => opt.MapFrom(src => src.Jobs!.Select(j => j.Id)));
             CreateMap<UpdateFreelancerDto, Freelancer>();
 
             CreateMap<CreateCategoryDto, Category>();
@@ -39,6 +41,9 @@ namespace src
 
             CreateMap<CreateProjectProposalDto, ProjectProposal>();
             CreateMap<ProjectProposal, ReadProjectProposal>();
+
+            CreateMap<CreateJobDto, Job>();
+            CreateMap<Job, ReadJobDto>();
         }
 
     }

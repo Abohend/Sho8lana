@@ -37,7 +37,6 @@ namespace src.Controllers
 		}
 		#endregion
 
-
 		// GET: api/<ClientController>
 		[Authorize(Roles = "Admin")]
         [HttpGet]

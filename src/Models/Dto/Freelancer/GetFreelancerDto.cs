@@ -11,5 +11,6 @@
 		public int? CategoryId { get; set; }
 		public List<int>? ProjectsId { get; set; }
 		public List<SkillDto>? Skills { get; set; }
+		public List<int>? JobsId { get; set; }
 	}
 }

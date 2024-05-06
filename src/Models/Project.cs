@@ -15,12 +15,17 @@ namespace src.Models
 		// TODO: required skills
 		public required int CategoryId { get; set; }
 		public Category? Category { get; set; }
+		
 		public required string ClientId {  get; set; }
 		public Client? Client { get; set; }
+		
 		public string? FreelancerId { get; set; }
 		public Freelancer? Freelancer { get; set; }
+		
 		public List<Skill>? Skills { get; set; } = new List<Skill>();
 		public List<ProjectProposal>? Proposals { get; set; }
+
+		public List<Job>? Jobs { get; set; }
 		// Todo: Team realtion ship (every Project has a team and every team has one Project)
 		// Todo: Payment reationship
 		#endregion

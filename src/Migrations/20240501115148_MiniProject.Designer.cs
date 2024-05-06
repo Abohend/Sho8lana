@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using src.Data;
 
@@ -11,9 +12,11 @@ using src.Data;
 namespace src.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240501115148_MiniProject")]
+    partial class MiniProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -343,9 +346,6 @@ namespace src.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("ExpectedBudget")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("FreelancerId")
                         .HasColumnType("nvarchar(450)");
 
@@ -362,48 +362,6 @@ namespace src.Migrations
                     b.HasIndex("FreelancerId");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("src.Models.ProjectProposal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClientNote")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FreelancerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool?>("IsAccepted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateOnly>("OfferedDeliverDate")
-                        .HasColumnType("date");
-
-                    b.Property<decimal>("OfferedPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FreelancerId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectsProposal");
                 });
 
             modelBuilder.Entity("src.Models.Skill", b =>
@@ -592,25 +550,6 @@ namespace src.Migrations
                     b.Navigation("Freelancer");
                 });
 
-            modelBuilder.Entity("src.Models.ProjectProposal", b =>
-                {
-                    b.HasOne("src.Models.Freelancer", "Freelancer")
-                        .WithMany("ProjectsProposal")
-                        .HasForeignKey("FreelancerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("src.Models.Project", "Project")
-                        .WithMany("Proposals")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Freelancer");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("src.Models.Freelancer", b =>
                 {
                     b.HasOne("src.Models.Category", "Category")
@@ -631,11 +570,6 @@ namespace src.Migrations
 
             modelBuilder.Entity("src.Models.Project", b =>
                 {
-                    b.Navigation("Proposals");
-                });
-
-            modelBuilder.Entity("src.Models.Project", b =>
-                {
                     b.Navigation("Jobs");
                 });
 
@@ -649,8 +583,6 @@ namespace src.Migrations
                     b.Navigation("Jobs");
 
                     b.Navigation("Projects");
-
-                    b.Navigation("ProjectsProposal");
                 });
 #pragma warning restore 612, 618
         }
