@@ -5,6 +5,7 @@ using src.Models.Dto.Category;
 using src.Models.Dto.Client;
 using src.Models.Dto.Freelancer;
 using src.Models.Dto.Job;
+using src.Models.Dto.JobProposal;
 using src.Models.Dto.Project;
 using src.Models.Dto.ProjectProposal;
 
@@ -40,7 +41,10 @@ namespace src
             CreateMap<CreateProjectDto, Project>();
 
             CreateMap<CreateProjectProposalDto, ProjectProposal>();
-            CreateMap<ProjectProposal, ReadProjectProposal>();
+            CreateMap<ProjectProposal, ReadProjectProposalDto>();
+
+            CreateMap<CreateJobProposalDto, JobProposal>();
+            CreateMap<JobProposal, ReadJobProposalDto>();
 
             CreateMap<CreateJobDto, Job>();
             CreateMap<Job, ReadJobDto>();

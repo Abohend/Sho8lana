@@ -80,7 +80,7 @@ namespace src.Controllers
 			// Authorized Freelancer
 			if (GetId() != id)
 			{
-				return Unauthorized(new Response(StatusCodes.Status203NonAuthoritative, ["Invalid Client Id"]));
+				return Unauthorized(new Response(StatusCodes.Status203NonAuthoritative, ["Invalid Freelancer Id"]));
 			}
 
 			// Category Id existence

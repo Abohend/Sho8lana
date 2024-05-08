@@ -15,6 +15,7 @@ namespace src.Data
 		public DbSet<Skill> Skills { get; set; }
 		public DbSet<Job> Jobs { get; set; }
 		public DbSet<ProjectProposal> ProjectsProposal { get; set; }
+		public DbSet<JobProposal> JobsProposal { get; set; }
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Category>()

@@ -24,31 +24,31 @@ namespace src.Repository
 			_context.SaveChanges();
 		}
 
-		public ReadProjectProposal? Read(int id)
+		public ReadProjectProposalDto? Read(int id)
 		{
 			var proposal = _context.ProjectsProposal.Find(id);
-			return _mapper.Map<ReadProjectProposal?>(proposal);
+			return _mapper.Map<ReadProjectProposalDto?>(proposal);
 		}
 
-		public List<ReadProjectProposal>? ReadAll(int projectId)
+		public List<ReadProjectProposalDto>? ReadAll(int projectId)
 		{
 			var proposals = _context.ProjectsProposal.Where(p => p.ProjectId == projectId).ToList();
-			return _mapper.Map<List<ReadProjectProposal>?>(proposals);
+			return _mapper.Map<List<ReadProjectProposalDto>?>(proposals);
 		}
 
-		public List<ReadProjectProposal>? ReadAll(string freelancerId)
+		public List<ReadProjectProposalDto>? ReadAll(string freelancerId)
 		{
 			var proposals = _context.ProjectsProposal.Where(p => p.FreelancerId == freelancerId).ToList();
-			return _mapper.Map<List<ReadProjectProposal>?>(proposals);
+			return _mapper.Map<List<ReadProjectProposalDto>?>(proposals);
 		}
 
-		public List<ReadProjectProposal>? ReadPending(string freelancerId)
+		public List<ReadProjectProposalDto>? ReadPending(string freelancerId)
 		{
 			var proposals = _context.ProjectsProposal
 				.Where(p => (p.FreelancerId == freelancerId) && 
 					(p.IsAccepted == null))
 				.ToList();
-			return _mapper.Map<List<ReadProjectProposal>?>(proposals);
+			return _mapper.Map<List<ReadProjectProposalDto>?>(proposals);
 		}
 
 		public bool UpdateByClient(int id, RespondProjectProposalDto dto)

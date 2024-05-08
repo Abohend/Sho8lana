@@ -127,7 +127,7 @@ namespace src.Controllers
 			{
 				return NotFound(new Response(404, ["Proposal Id is invalid"]));
 			}
-			else if (proposal.FreelancerId != GetId())
+			else if (proposal.FreelancerId != GetId() || proposal.IsAccepted == true)
 			{
 				return BadRequest(new Response(401, ["Not authorized to delete this proposal"]));
 			}

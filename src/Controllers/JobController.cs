@@ -35,7 +35,7 @@ namespace src.Controllers
 		public IActionResult Get(int projectId)
 		{
 			// make sure the authorized user is the owner of the project
-			var project = _projectRepo.Get(projectId);
+			var project = _projectRepo.Read(projectId);
 			if (project == null)
 			{
 				return NotFound(new Response(404, ["Invalid project Id"]));
@@ -67,7 +67,7 @@ namespace src.Controllers
 		public IActionResult Post(int projectId, [FromBody] List<CreateJobDto> JobsDto)
 		{
 			// make sure the authorized user is the owner of the project
-			var project = _projectRepo.Get(projectId);
+			var project = _projectRepo.Read(projectId);
 			if (project == null)
 			{
 				return NotFound(new Response(404, ["Invalid project Id"]));
@@ -87,7 +87,7 @@ namespace src.Controllers
 		{
 			// only allowed for freelancer who created it and must sure that no freelancer is assigned to it
 			var job = _jobRepo.Read(id);
-			var project = _projectRepo.Get(job.ProjectId);
+			var project = _projectRepo.Read(job.ProjectId);
 			if (project!.FreelancerId != GetId())
 			{
 				return BadRequest(new Response(401, ["Invalid Job Id"]));
