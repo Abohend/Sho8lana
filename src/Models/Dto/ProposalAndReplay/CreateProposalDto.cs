@@ -1,13 +1,11 @@
-﻿namespace src.Models.Dto.JobProposal
+﻿namespace src.Models.Dto.Proposal
 {
-	public class CreateJobProposalDto
+	public class CreateProposalDto
 	{
-		public decimal Price { get; set; }
+		public float Price { get; set; }
 		public DateOnly DeliverDate { get; set; }
 		public string? Description { get; set; }
-
-		// reciever Id
 		public string FreelancerId { get; internal set; } = string.Empty;
-		public int JobId { get; set; }
+		public int WorkId { get; set; } // JobId or ProjectId
 	}
 }

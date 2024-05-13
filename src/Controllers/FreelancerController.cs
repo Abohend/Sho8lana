@@ -49,7 +49,7 @@ namespace src.Controllers
 		[HttpGet]
 		public IActionResult Get()
 		{
-			var freelancers = _freelancerRepo.ReadWithProjectsAndSkills();
+			var freelancers = _freelancerRepo.ReadAllWithSkills();
 
 			// update image pathes
 			foreach (var freelancer in freelancers!)
@@ -64,7 +64,7 @@ namespace src.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(string id)
 		{
-			var freelancer = _freelancerRepo.ReadWithProjectsAndSkills(id);
+			var freelancer = _freelancerRepo.ReadWithSkills(id);
 			if (freelancer != null)
 			{
 				freelancer.ImageUrl = GetImageUrl(freelancer.ImageUrl);

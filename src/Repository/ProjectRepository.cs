@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using src.Data;
 using src.Models;
@@ -9,10 +10,12 @@ namespace src.Repository
     public class ProjectRepository
 	{
 		private readonly Context _db;
+		private readonly ProjectProposalRepository _projectProposalRepo;
 
-		public ProjectRepository(Context db)
+		public ProjectRepository(Context db, ProjectProposalRepository projectProposalRepository)
         {
 			_db = db;
+			this._projectProposalRepo = projectProposalRepository;
 		}
         public List<Project>? GetFullData()
 		{
@@ -36,6 +39,18 @@ namespace src.Repository
 				.Include (j => j.Category)
 				.Include (j => j.Client)
 				.FirstOrDefault(j => j.Id == id);
+		}
+
+		public List<Project>? Read(string freelancerId)
+		{
+			var acceptedProposals = _projectProposalRepo.ReadAccepted(freelancerId);
+			var projectsId = acceptedProposals?.Select(ap => ap.WorkId).ToList();
+			List<Project> projects = new List<Project>();
+			foreach(var projectId in projectsId!)
+			{
+				projects.Add(Read(projectId)!);
+			}
+			return projects;
 		}
 
 		public void Create(Project prject)

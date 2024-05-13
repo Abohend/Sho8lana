@@ -5,9 +5,9 @@ using src.Models.Dto.Category;
 using src.Models.Dto.Client;
 using src.Models.Dto.Freelancer;
 using src.Models.Dto.Job;
-using src.Models.Dto.JobProposal;
 using src.Models.Dto.Project;
-using src.Models.Dto.ProjectProposal;
+using src.Models.Dto.Proposal;
+using src.Models.Dto.ProposalAndReplay;
 
 namespace src
 {
@@ -26,9 +26,7 @@ namespace src
             CreateMap<UpdateClientDto, Client>();
 
             CreateMap<Freelancer, GetFreelancerDto>()
-                .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath))
-                .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)))
-                .ForMember(des => des.JobsId, opt => opt.MapFrom(src => src.Jobs!.Select(j => j.Id)));
+                .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath));
             CreateMap<UpdateFreelancerDto, Freelancer>();
 
             CreateMap<CreateCategoryDto, Category>();
@@ -40,11 +38,17 @@ namespace src
             CreateMap<Project, GetProjectDto>();
             CreateMap<CreateProjectDto, Project>();
 
-            CreateMap<CreateProjectProposalDto, ProjectProposal>();
-            CreateMap<ProjectProposal, ReadProjectProposalDto>();
+			CreateMap<ProposalReplayDto, ProposalReplay>().ReverseMap();
 
-            CreateMap<CreateJobProposalDto, JobProposal>();
-            CreateMap<JobProposal, ReadJobProposalDto>();
+			CreateMap<CreateProposalDto, ProjectProposal>()
+                .ForMember(des => des.ProjectId, opt => opt.MapFrom(src => src.WorkId));
+            CreateMap<ProjectProposal, ReadProposalWithReplayDto>()
+                .ForMember(des => des.WorkId, opt => opt.MapFrom(src => src.ProjectId));
+
+            CreateMap<CreateProposalDto, JobProposal>()
+                .ForMember(des => des.JobId, opt => opt.MapFrom(src => src.WorkId));
+			CreateMap<JobProposal, ReadProposalWithReplayDto>()
+			    .ForMember(des => des.WorkId, opt => opt.MapFrom(src => src.JobId));
 
             CreateMap<CreateJobDto, Job>();
             CreateMap<Job, ReadJobDto>();

@@ -19,9 +19,6 @@ namespace src.Models
 		public required string ClientId {  get; set; }
 		public Client? Client { get; set; }
 		
-		public string? FreelancerId { get; set; }
-		public Freelancer? Freelancer { get; set; }
-		
 		public List<Skill>? Skills { get; set; } = new List<Skill>();
 		public List<ProjectProposal>? Proposals { get; set; }
 

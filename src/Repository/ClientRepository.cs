@@ -62,6 +62,18 @@ namespace src.Repository
 			return false;
 		}
 
+		public bool UpdateBalance(string id, decimal amount)
+		{
+			var client = _db.Clients.SingleOrDefault(c => c.Id == id);
+			if ((client!.Balance + amount) >= 0)
+			{
+				client.Balance += amount;
+				_db.SaveChanges();
+				return true;
+			}
+			return false;
+		}
+
 		public bool Delete(string id)
 		{
 			var client = Read(id);

@@ -37,11 +37,11 @@ namespace src.Repository
 			var jobs = _context.Jobs.Where(j => j.ProjectId == projectId).ToList();
 			return _mapper.Map<List<ReadJobDto>?>(jobs);
 		}
-		public List<ReadJobDto>? ReadAll(string freelancerId)
-		{
-			var jobs = _context.Jobs.Where(j => j.FreelancerId == freelancerId).ToList();
-			return _mapper.Map<List<ReadJobDto>?>(jobs);
-		}
+		//public List<ReadJobDto>? ReadAll(string freelancerId)
+		//{
+		//	var jobs = _context.Jobs.Where(j => j.FreelancerId == freelancerId).ToList();
+		//	return _mapper.Map<List<ReadJobDto>?>(jobs);
+		//}
 
 		public bool Delete(int id)
 		{

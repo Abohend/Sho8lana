@@ -9,7 +9,6 @@
 		public Project? Project { get; set; }
 		public int ProjectId { get; set; }
 
-		public Freelancer? Freelancer { get; set; }
-		public string? FreelancerId { get; set; }
+		public List<JobProposal>? Proposals { get; set; }
 	}
 }

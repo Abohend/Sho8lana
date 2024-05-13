@@ -12,12 +12,15 @@ namespace src.Repository
 		private readonly Context _db;
 		private readonly ImageService _imageService;
 		private readonly IMapper _mapper;
+		private readonly ProjectProposalRepository _projectProposalRepo;
 
-		public FreelancerRepository(Context db, ImageService imageService, IMapper mapper)
+		public FreelancerRepository(Context db, ImageService imageService, IMapper mapper, 
+			ProjectProposalRepository projectProposalRepository)
 		{
 			this._db = db;
 			this._imageService = imageService;
 			this._mapper = mapper;
+			this._projectProposalRepo = projectProposalRepository;
 		}
 
 		public List<GetFreelancerDto>? Read()
@@ -25,9 +28,9 @@ namespace src.Repository
 			var freelancers = _db.Freelancers.ToList();
 			return _mapper.Map<List<GetFreelancerDto>?>(freelancers);
 		}
-		public List<GetFreelancerDto>? ReadWithProjectsAndSkills()
+		public List<GetFreelancerDto>? ReadAllWithSkills()
 		{
-			var freelancers = _db.Freelancers.Include(f => f.Projects).Include(f => f.Skills).ToList();
+			var freelancers = _db.Freelancers.Include(f => f.Skills).ToList();
 			return _mapper.Map<List<GetFreelancerDto>?>(freelancers);
 		}
 		public GetFreelancerDto? Read(string id)
@@ -35,9 +38,9 @@ namespace src.Repository
 			var freelancer = _db.Freelancers.Find(id);
 			return _mapper.Map<GetFreelancerDto?>(freelancer);
 		}
-		public GetFreelancerDto? ReadWithProjectsAndSkills(string id)
+		public GetFreelancerDto? ReadWithSkills(string id)
 		{
-			var freelancer = _db.Freelancers.Include(f => f.Projects).Include(f => f.Skills).SingleOrDefault(f => f.Id == id);
+			var freelancer = _db.Freelancers.Include(f => f.Skills).SingleOrDefault(f => f.Id == id);
 			return _mapper.Map<GetFreelancerDto?>(freelancer);
 		}
 

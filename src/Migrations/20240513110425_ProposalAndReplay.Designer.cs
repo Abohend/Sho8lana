@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using src.Data;
 
@@ -11,9 +12,11 @@ using src.Data;
 namespace src.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240513110425_ProposalAndReplay")]
+    partial class ProposalAndReplay
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,6 +307,9 @@ namespace src.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FreelancerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -311,6 +317,8 @@ namespace src.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FreelancerId");
 
                     b.HasIndex("ProjectId");
 
@@ -341,6 +349,9 @@ namespace src.Migrations
                     b.Property<decimal?>("ExpectedBudget")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("FreelancerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -350,6 +361,8 @@ namespace src.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("FreelancerId");
 
                     b.ToTable("Projects");
                 });
@@ -562,11 +575,17 @@ namespace src.Migrations
 
             modelBuilder.Entity("src.Models.Job", b =>
                 {
+                    b.HasOne("src.Models.Freelancer", "Freelancer")
+                        .WithMany("Jobs")
+                        .HasForeignKey("FreelancerId");
+
                     b.HasOne("src.Models.Project", "Project")
                         .WithMany("Jobs")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Freelancer");
 
                     b.Navigation("Project");
                 });
@@ -584,6 +603,10 @@ namespace src.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("src.Models.Freelancer", "Freelancer")
+                        .WithMany("Projects")
+                        .HasForeignKey("FreelancerId");
 
                     b.OwnsOne("src.Models.Duration", "ExpectedDuration", b1 =>
                         {
@@ -609,6 +632,8 @@ namespace src.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("ExpectedDuration");
+
+                    b.Navigation("Freelancer");
                 });
 
             modelBuilder.Entity("src.Models.ProposalReplay", b =>
@@ -636,13 +661,13 @@ namespace src.Migrations
             modelBuilder.Entity("src.Models.JobProposal", b =>
                 {
                     b.HasOne("src.Models.Freelancer", "Freelancer")
-                        .WithMany("JobProposals")
+                        .WithMany()
                         .HasForeignKey("FreelancerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("src.Models.Job", "Job")
-                        .WithMany("Proposals")
+                        .WithMany()
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -678,11 +703,6 @@ namespace src.Migrations
                     b.Navigation("Projects");
                 });
 
-            modelBuilder.Entity("src.Models.Job", b =>
-                {
-                    b.Navigation("Proposals");
-                });
-
             modelBuilder.Entity("src.Models.Project", b =>
                 {
                     b.Navigation("Jobs");
@@ -702,7 +722,9 @@ namespace src.Migrations
 
             modelBuilder.Entity("src.Models.Freelancer", b =>
                 {
-                    b.Navigation("JobProposals");
+                    b.Navigation("Jobs");
+
+                    b.Navigation("Projects");
 
                     b.Navigation("ProjectsProposal");
                 });

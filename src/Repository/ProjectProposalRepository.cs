@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using src.Data;
 using src.Models;
-using src.Models.Dto.ProjectProposal;
+using src.Models.Dto.Proposal;
+using src.Models.Dto.ProposalAndReplay;
 
 namespace src.Repository
 {
@@ -10,62 +11,56 @@ namespace src.Repository
 	{
 		private readonly Context _context;
 		private readonly IMapper _mapper;
+		private readonly ProposalReplayRepository _proposalReplayRepo;
 
-		public ProjectProposalRepository(Context context, IMapper mapper) 
+		public ProjectProposalRepository(Context context, IMapper mapper
+			, ProposalReplayRepository proposalReplayRepository)
 		{
 			this._context = context;
 			this._mapper = mapper;
+			this._proposalReplayRepo = proposalReplayRepository;
 		}
 
-		public void Create(CreateProjectProposalDto dto)
+		public void Create(CreateProposalDto dto)
 		{
 			var proposal = _mapper.Map<ProjectProposal>(dto);
 			_context.Add(proposal);
 			_context.SaveChanges();
 		}
 
-		public ReadProjectProposalDto? Read(int id)
+		public ReadProposalWithReplayDto? Read(int id)
 		{
-			var proposal = _context.ProjectsProposal.Find(id);
-			return _mapper.Map<ReadProjectProposalDto?>(proposal);
+			var proposal = _context.ProjectsProposal.Include(p => p.ProposalReplay).SingleOrDefault(p => p.Id == id);
+			return _mapper.Map<ReadProposalWithReplayDto?>(proposal);
 		}
 
-		public List<ReadProjectProposalDto>? ReadAll(int projectId)
+		public List<ReadProposalWithReplayDto>? ReadAll(int projectId)
 		{
-			var proposals = _context.ProjectsProposal.Where(p => p.ProjectId == projectId).ToList();
-			return _mapper.Map<List<ReadProjectProposalDto>?>(proposals);
+			var proposals = _context.ProjectsProposal.Include(p => p.ProposalReplay).Where(p => p.ProjectId == projectId).ToList();
+			return _mapper.Map<List<ReadProposalWithReplayDto>?>(proposals);
 		}
 
-		public List<ReadProjectProposalDto>? ReadAll(string freelancerId)
+		public List<ReadProposalWithReplayDto>? ReadAll(string freelancerId)
 		{
-			var proposals = _context.ProjectsProposal.Where(p => p.FreelancerId == freelancerId).ToList();
-			return _mapper.Map<List<ReadProjectProposalDto>?>(proposals);
+			var proposals = _context.ProjectsProposal.Include(p => p.ProposalReplay).Where(p => p.FreelancerId == freelancerId).ToList();
+			return _mapper.Map<List<ReadProposalWithReplayDto>?>(proposals);
 		}
 
-		public List<ReadProjectProposalDto>? ReadPending(string freelancerId)
+		public List<ReadProposalWithReplayDto>? ReadAccepted(string freelancerId)
+		{
+			return ReadAll(freelancerId)?
+					.Where(pr => pr.ProposalReplay != null)
+					.Where(pr => pr.ProposalReplay!.IsAccepted == true)
+					.ToList();
+		}
+
+		public List<ReadProposalWithReplayDto>? ReadPending(string freelancerId)
 		{
 			var proposals = _context.ProjectsProposal
-				.Where(p => (p.FreelancerId == freelancerId) && 
-					(p.IsAccepted == null))
+				.Where(p => (p.FreelancerId == freelancerId) &&
+					(p.ProposalReplay == null))
 				.ToList();
-			return _mapper.Map<List<ReadProjectProposalDto>?>(proposals);
-		}
-
-		public bool UpdateByClient(int id, RespondProjectProposalDto dto)
-		{
-			var proposal = _context.ProjectsProposal.Include(p => p.Project).SingleOrDefault(p => p.Id == id);
-			if (proposal != null)
-			{
-				proposal.IsAccepted = dto.IsAccepted;
-				proposal.ClientNote = dto.ClientNote;
-				if (proposal.IsAccepted == true)
-				{
-					proposal.Project!.FreelancerId = proposal.FreelancerId;
-				}
-				_context.SaveChanges();
-				return true;
-			}
-			return false;
+			return _mapper.Map<List<ReadProposalWithReplayDto>?>(proposals);
 		}
 
 		public bool Delete(int id)

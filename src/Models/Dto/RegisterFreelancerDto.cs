@@ -18,5 +18,7 @@ namespace src.Models.Dto
 		public string? ConfirmPassword { get; set; }
 		public required string Name { get; set; }
 		public required int CategoryId { get; set; }
+		[Range(0, 50)]
+		public int? ExperienceYears { get; set; }
 	}
 }
