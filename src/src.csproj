@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\category\" />
+    <Folder Include="wwwroot\client\" />
+    <Folder Include="wwwroot\freelancer\" />
   </ItemGroup>
 
 </Project>

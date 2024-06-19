@@ -13,7 +13,7 @@ namespace src.Models.Dto.Project
         public DateTime StartDate { get; set; }
 		public decimal? ExpectedBudget { get; set; }
 		public Duration? ExpectedDuration { get; set; }
-		public UserDto? Client { get; set; }
+		public string? ClientId { get; set; }
 		public GetCategoryDto? Category { get; set; }
 		public List<SkillDto>? Skills { get; set; }
 		

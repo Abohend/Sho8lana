@@ -43,20 +43,20 @@ namespace src.Repository
 
 		public bool Update(string id, UpdateClientDto newClient)
 		{
-			var client = Read(id);
+			Client? client = _db.Clients.Find(id);
 			if (client != null)
 			{
 				//image
 				if (newClient.Image != null)
 				{
-					_imageService.DeleteImage(client.ImageUrl);
-					client.ImageUrl = _imageService.UploadImage("client", newClient.Image);
+					_imageService.DeleteImage(client.ImagePath);
+					client.ImagePath = _imageService.UploadImage("client", newClient.Image);
 				}
 				
 				// Note : Email will not be updated as UserName == Email "only unique values"
 				client.Name = newClient.Name;
 				client.PhoneNumber = newClient.PhoneNumber;
-				_db.SaveChanges();
+				_ = _db.SaveChanges();
 				return true;
 			}
 			return false;
@@ -76,7 +76,7 @@ namespace src.Repository
 
 		public bool Delete(string id)
 		{
-			var client = Read(id);
+			Client? client = _db.Clients.Find(id);
 			if (client != null)
 			{
 				_db.Remove(client);

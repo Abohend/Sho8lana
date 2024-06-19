@@ -78,10 +78,10 @@ namespace src.Repository
 
 		public bool Delete(string id)
 		{
-			var freelancer = Read(id);
+			Freelancer? freelancer = _db.Freelancers.Find(id);
 			if (freelancer != null)
 			{
-				_imageService.DeleteImage(freelancer.ImageUrl);
+				_imageService.DeleteImage(freelancer.ImagePath);
 				_db.Remove(freelancer);
 				_db.SaveChanges();
 				return true;

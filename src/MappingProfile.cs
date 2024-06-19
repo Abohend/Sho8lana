@@ -34,7 +34,6 @@ namespace src
 
 			CreateMap<Skill, SkillDto>().ReverseMap();
 
-			CreateMap<Client, UserDto>();
             CreateMap<Project, GetProjectDto>();
             CreateMap<CreateProjectDto, Project>();
 
