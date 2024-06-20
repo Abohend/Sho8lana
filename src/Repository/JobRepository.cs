@@ -32,16 +32,28 @@ namespace src.Repository
 			var job = _context.Jobs.Find(id);
 			return _mapper.Map<ReadJobDto>(job);
 		}
+
 		public List<ReadJobDto>? ReadAll(int projectId)
 		{
 			var jobs = _context.Jobs.Where(j => j.ProjectId == projectId).ToList();
 			return _mapper.Map<List<ReadJobDto>?>(jobs);
 		}
-		//public List<ReadJobDto>? ReadAll(string freelancerId)
-		//{
-		//	var jobs = _context.Jobs.Where(j => j.FreelancerId == freelancerId).ToList();
-		//	return _mapper.Map<List<ReadJobDto>?>(jobs);
-		//}
+
+		public List<ReadJobDto>? ReadAll(string freelancerId)
+		{
+			var jobs = _context.Jobs.Where(j => ReadJobTaker(j) == freelancerId).ToList();
+			return _mapper.Map<List<ReadJobDto>?>(jobs);
+		}
+
+		// Todo
+		public string? ReadJobTaker(Job job)
+		{
+			if (job.Proposals != null && job.Proposals.Any(p => p.ProposalReplay!.IsAccepted) == true)
+			{
+				return job.Proposals.First(p => p.ProposalReplay!.IsAccepted == true).FreelancerId;
+			}
+			return null;
+		}
 
 		public bool Delete(int id)
 		{

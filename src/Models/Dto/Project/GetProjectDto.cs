@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using src.Models.Dto.Category;
+﻿using src.Models.Dto.Category;
 
 namespace src.Models.Dto.Project
 {

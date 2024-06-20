@@ -53,6 +53,14 @@ namespace src.Repository
 			return projects;
 		}
 
+		public string? ReadProjectTaker(int projectId)
+		{
+			var acceptedProposal = _projectProposalRepo.ReadAccepted(projectId);
+			if (acceptedProposal != null)
+				return acceptedProposal.FreelancerId;
+			return null;
+		}
+
 		public void Create(Project prject)
 		{
 			_db.Add(prject);

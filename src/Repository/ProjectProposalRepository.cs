@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using src.Data;
 using src.Models;
 using src.Models.Dto.Proposal;
@@ -52,6 +53,13 @@ namespace src.Repository
 					.Where(pr => pr.ProposalReplay != null)
 					.Where(pr => pr.ProposalReplay!.IsAccepted == true)
 					.ToList();
+		}
+
+		public ReadProposalWithReplayDto? ReadAccepted(int projectId)
+		{
+			return ReadAll(projectId)?
+					.Where(pr => pr.ProposalReplay != null)
+					.SingleOrDefault(pr => pr.ProposalReplay!.IsAccepted == true);
 		}
 
 		public List<ReadProposalWithReplayDto>? ReadPending(string freelancerId)

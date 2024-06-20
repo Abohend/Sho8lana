@@ -50,7 +50,8 @@ namespace src
 			    .ForMember(des => des.WorkId, opt => opt.MapFrom(src => src.JobId));
 
             CreateMap<CreateJobDto, Job>();
-            CreateMap<Job, ReadJobDto>();
+            CreateMap<Job, ReadJobDto>()
+                .ForMember(dto => dto.FreelancerId, opt => opt.MapFrom(j => j.Proposals!.FirstOrDefault(p => p.ProposalReplay!.IsAccepted == true)!.FreelancerId));
         }
 
     }
