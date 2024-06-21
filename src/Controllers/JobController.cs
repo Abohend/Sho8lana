@@ -48,21 +48,6 @@ namespace src.Controllers
 			return Ok(new Response(200, jobs));
 		}
 
-		//Todo
-		// GET api/<JobController>/5
-		// returns all the suggested jobs to a specific freelancer
-		//[HttpGet("{freelancerId}")]
-		//public IActionResult Get(string freelancerId)
-		//{
-		//	// make sure that freelancer is getting his own data
-		//	if (freelancerId != GetId())
-		//	{
-		//		return BadRequest(new Response(401, "Invalid freelancer Id"));
-		//	}
-		//	var jobs = _jobRepo.ReadAll(freelancerId);
-		//	return Ok(new Response(200, jobs));
-		//}
-
 		// POST api/<JobController>
 		[HttpPost("{projectId}")]
 		public IActionResult Post(int projectId, [FromBody] List<CreateJobDto> JobsDto)

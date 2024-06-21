@@ -70,14 +70,14 @@ namespace src.Controllers
 
 		[Authorize(Roles = "Freelancer")]
 		// POST api/<ProjectProposalController>
-		[HttpPost]
-		public IActionResult Post([FromBody] CreateProposalDto projectProposalDto)
+		[HttpPost("{projectId}")]
+		public IActionResult Post(int projectId, [FromBody] CreateProposalDto projectProposalDto)
 		{
 			var freelancerId = GetId();
 
 			// Verify freelancer category == project category
 			var freelancer = _freelancerRepo.Read(freelancerId);
-			var project = _projectRepo.Read(projectProposalDto.WorkId);
+			var project = _projectRepo.Read(projectId);
 			
 			if (project == null)
 			{
@@ -90,6 +90,7 @@ namespace src.Controllers
 			}
 
 			projectProposalDto.FreelancerId = freelancerId;
+			projectProposalDto.WorkId = projectId;
 			_projectProposalRepo.Create(projectProposalDto);
 			return Ok(new Response(201));
 		}

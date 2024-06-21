@@ -72,6 +72,7 @@ namespace src
 			builder.Services.AddScoped<ClientRepository>();
 			builder.Services.AddScoped<FreelancerRepository>();
 			builder.Services.AddScoped<ProjectProposalRepository>();
+			builder.Services.AddScoped<JobProposalRepository>();
 			builder.Services.AddScoped<ProposalReplayRepository>();
 			builder.Services.AddScoped<JobRepository>();
 

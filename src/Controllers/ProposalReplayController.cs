@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using src.Models;
@@ -8,6 +9,7 @@ using System.Security.Claims;
 
 namespace src.Controllers
 {
+	[Authorize(Roles = "Freelancer, Client")]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ProposalReplayController : ControllerBase
@@ -16,6 +18,7 @@ namespace src.Controllers
 		private readonly ProjectProposalRepository _projectProposalRepo;
 		private readonly ProjectRepository _projectRepo;
 		private readonly ClientRepository _clientRepository;
+		private readonly JobProposalRepository _jobProposalRepo;
 
 		#region Helpers
 		private string GetId()
@@ -27,12 +30,14 @@ namespace src.Controllers
 		public ProposalReplayController(ProposalReplayRepository proposalReplayRepository
 			,ProjectProposalRepository projectProposalRepository
 			, ProjectRepository projectRepository
-			,ClientRepository clientRepository)
+			,ClientRepository clientRepository,
+			JobProposalRepository jobProposalRepository)
 		{
 			this._proposalReplayRepo = proposalReplayRepository;
 			this._projectProposalRepo = projectProposalRepository;
 			this._projectRepo = projectRepository;
 			this._clientRepository = clientRepository;
+			this._jobProposalRepo = jobProposalRepository;
 		}
 
 
@@ -84,16 +89,32 @@ namespace src.Controllers
 		}
 
 
-		//[HttpPost("/job/{jobProposalId:int}")]
-		//public IActionResult Post(int jobProposalId, ProposalReplay replay)
-		//{
-		//	/*
-		//	 Creating JobProposal Replay steps
-		//	1. valid owner of the JobProposal GetId() == JobProposal.FreelancerId
-		//	2. valid that job has no replayDto before
-		//	3. if replayDto.IsAccepted == ture => make psaudo payment
-		//	 */
+		[HttpPost("/job/{jobProposalId:int}")]
+		public IActionResult PostJobProposalReplay(int jobProposalId, ProposalReplayDto replayDto)
+		{
+			/*
+			 Creating JobProposal Replay steps
+			1. valid owner of the JobProposal GetId() == JobProposal.FreelancerId
+			2. valid that job has no replayDto before
+			3. if replayDto.IsAccepted == ture => make psaudo payment
+			 */
 
-		//}
-    }
+			// validating job proposal Id
+			var job = _jobProposalRepo.Read(jobProposalId);
+
+			if (job == null)
+			{
+				return BadRequest(new Response(401, ["Invalid job proposal Id"]));
+			}
+
+			// validating that he's the proposal reciever
+			if (GetId() != job.FreelancerId)
+			{
+				return BadRequest(new Response(401, ["You cann't reply to a proposal you didn't own"]));
+			}
+
+			_proposalReplayRepo.Create(replayDto, jobProposalId);
+			return Ok(new Response(200));
+		}
+	}
 }
