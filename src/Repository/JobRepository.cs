@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using src.Data;
 using src.Models;
 using src.Models.Dto.Job;
@@ -41,7 +42,12 @@ namespace src.Repository
 
 		public List<ReadJobDto>? ReadAll(string freelancerId)
 		{
-			var jobs = _context.Jobs.Where(j => ReadJobTaker(j) == freelancerId).ToList();
+			var jobs = _context
+				.Jobs
+				.Include(p => p.Proposals)
+				//.Where(p => ReadJobTaker(p) == freelancerId)
+				.Where(j => j.Proposals!.First(p => p.ProposalReplay!.IsAccepted == true).FreelancerId == freelancerId)
+				.ToList();
 			return _mapper.Map<List<ReadJobDto>?>(jobs);
 		}
 

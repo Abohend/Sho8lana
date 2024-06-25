@@ -25,7 +25,7 @@ namespace src
                 .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)));
             CreateMap<UpdateClientDto, Client>();
 
-            CreateMap<Freelancer, GetFreelancerDto>()
+            CreateMap<Freelancer, ReadFreelancerDto>()
                 .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath));
             CreateMap<UpdateFreelancerDto, Freelancer>();
 
@@ -34,7 +34,7 @@ namespace src
 
 			CreateMap<Skill, SkillDto>().ReverseMap();
 
-            CreateMap<Project, GetProjectDto>();
+            CreateMap<Project, ReadProjectDto>();
             CreateMap<CreateProjectDto, Project>();
 
 			CreateMap<ProposalReplayDto, ProposalReplay>().ReverseMap();
@@ -50,9 +50,9 @@ namespace src
 			    .ForMember(des => des.WorkId, opt => opt.MapFrom(src => src.JobId));
 
             CreateMap<CreateJobDto, Job>();
-            CreateMap<Job, ReadJobDto>()
-                .ForMember(dto => dto.FreelancerId, opt => opt.MapFrom(j => j.Proposals!.FirstOrDefault(p => p.ProposalReplay!.IsAccepted == true)!.FreelancerId));
-        }
+            CreateMap<Job, ReadJobDto>();
+                //.ForMember(dto => dto.FreelancerId, opt => opt.MapFrom(j => j.Proposals!.FirstOrDefault(p => p.ProposalReplay!.IsAccepted == true)!.FreelancerId));
+		}
 
-    }
+	}
 }

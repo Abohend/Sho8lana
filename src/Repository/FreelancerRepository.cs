@@ -13,36 +13,48 @@ namespace src.Repository
 		private readonly ImageService _imageService;
 		private readonly IMapper _mapper;
 		private readonly ProjectProposalRepository _projectProposalRepo;
+		private readonly ProjectRepository _projectRepo;
+		private readonly JobRepository _jobRepo;
 
 		public FreelancerRepository(Context db, ImageService imageService, IMapper mapper, 
-			ProjectProposalRepository projectProposalRepository)
+			ProjectProposalRepository projectProposalRepository, ProjectRepository projectRepository,
+			JobRepository jobRepository)
 		{
 			this._db = db;
 			this._imageService = imageService;
 			this._mapper = mapper;
 			this._projectProposalRepo = projectProposalRepository;
+			this._projectRepo = projectRepository;
+			this._jobRepo = jobRepository;
 		}
 
-		public List<GetFreelancerDto>? Read()
+		public List<ReadFreelancerDto>? Read()
 		{
 			var freelancers = _db.Freelancers.ToList();
-			return _mapper.Map<List<GetFreelancerDto>?>(freelancers);
+			return _mapper.Map<List<ReadFreelancerDto>?>(freelancers);
 		}
-		public List<GetFreelancerDto>? ReadAllWithSkills()
+
+		public List<ReadFreelancerDto>? ReadAll()
 		{
 			var freelancers = _db.Freelancers.Include(f => f.Skills).ToList();
-			return _mapper.Map<List<GetFreelancerDto>?>(freelancers);
+			return _mapper.Map<List<ReadFreelancerDto>?>(freelancers);
 		}
-		public GetFreelancerDto? Read(string id)
+		public ReadFreelancerDto? Read(string id)
 		{
 			var freelancer = _db.Freelancers.Find(id);
-			return _mapper.Map<GetFreelancerDto?>(freelancer);
+			return _mapper.Map<ReadFreelancerDto?>(freelancer);
 		}
-		public GetFreelancerDto? ReadWithSkills(string id)
+		public ReadFreelancerDto? ReadFull(string id)
 		{
-			var freelancer = _db.Freelancers.Include(f => f.Skills).SingleOrDefault(f => f.Id == id);
-			return _mapper.Map<GetFreelancerDto?>(freelancer);
-		}
+			var freelancer = _db.Freelancers.Include(f => f.Skills).Include(f => f.JobProposals).Include(f => f.ProjectsProposal).SingleOrDefault(f => f.Id == id);
+			var freelancerDto = _mapper.Map<ReadFreelancerDto?>(freelancer);
+
+			//freelancerDto!.Jobs = _jobRepo.ReadAll(id);
+			//freelancerDto!.Projects = _projectRepo.ReadAll(id);
+			
+
+			return freelancerDto;
+		} 
 
 		public void Update(string id, UpdateFreelancerDto freelancerDto, List<Skill>? skills)
 		{

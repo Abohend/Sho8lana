@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using src.Data;
 using src.Models;
+using src.Models.Dto.Freelancer;
 using src.Models.Dto.Project;
 
 namespace src.Repository
@@ -11,46 +11,48 @@ namespace src.Repository
 	{
 		private readonly Context _db;
 		private readonly ProjectProposalRepository _projectProposalRepo;
+		private readonly IMapper _mapper;
 
-		public ProjectRepository(Context db, ProjectProposalRepository projectProposalRepository)
+		public ProjectRepository(Context db, 
+			ProjectProposalRepository projectProposalRepository,
+			IMapper mapper)
         {
 			_db = db;
 			this._projectProposalRepo = projectProposalRepository;
+			this._mapper = mapper;
 		}
-        public List<Project>? GetFullData()
+
+		#region Read
+		public List<ReadProjectDto>? ReadAll()
 		{
-			return _db.Projects
+			var projects = _db.Projects
 				.Include(j => j.Category)
 				.Include(j => j.Client)
 				.Include(p => p.Skills)
 				.ToList();
-		}
-		public Project? Read(int id)
-		{
-			return _db.Projects.FirstOrDefault(j => j.Id == id);
-		}
-		public Project? GetWithSkills(int id)
-		{
-			return _db.Projects.Include(j => j.Skills).SingleOrDefault(p => p.Id == id);
-		}
-		public Project? GetWithCategoryAndClient(int id)
-		{
-			return _db.Projects
-				.Include (j => j.Category)
-				.Include (j => j.Client)
-				.FirstOrDefault(j => j.Id == id);
+
+			return _mapper.Map<List<ReadProjectDto>?>(projects);
 		}
 
-		public List<Project>? Read(string freelancerId)
+		public ReadProjectDto? Read(int id)
 		{
-			var acceptedProposals = _projectProposalRepo.ReadAccepted(freelancerId);
-			var projectsId = acceptedProposals?.Select(ap => ap.WorkId).ToList();
-			List<Project> projects = new List<Project>();
-			foreach(var projectId in projectsId!)
-			{
-				projects.Add(Read(projectId)!);
-			}
-			return projects;
+			return _mapper.Map<ReadProjectDto?>(_db.Projects.FirstOrDefault(j => j.Id == id));
+		}
+
+		public ReadProjectDto? ReadWithSkills(int id)
+		{
+			return _mapper.Map<ReadProjectDto?>(_db.Projects
+				.Include (j => j.Skills)
+				.FirstOrDefault(j => j.Id == id));
+		}
+
+		public List<ReadProjectDto>? ReadAll(string freelancerId)
+		{
+			var projects = _db.Projects
+				.Include(p => p.Proposals)
+				.Where(p => p.Proposals!.First(p => p.ProposalReplay!.IsAccepted == true).FreelancerId == freelancerId)
+				.ToList();
+			return _mapper.Map<List<ReadProjectDto>?>(projects);
 		}
 
 		public string? ReadProjectTaker(int projectId)
@@ -61,30 +63,37 @@ namespace src.Repository
 			return null;
 		}
 
-		public void Create(Project prject)
+		#endregion
+
+		public void Create(string ClientId, List<Skill>? skills, CreateProjectDto projectDto)
 		{
-			_db.Add(prject);
+			var project = _mapper.Map<Project>(projectDto);
+			project.ClientId = ClientId;
+			project.Skills = skills;
+			_db.Add(project);
 			_db.SaveChanges();
 		}
+
 		/// <summary>
 		/// Update a project if exist, or return false if not exist
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="newProject"></param>
 		/// <returns></returns>
-		public bool Update(int id, Project newProject)
+		public bool Update(int id, CreateProjectDto newProject)
 		{
-			Project? project = GetWithSkills(id);
+			Project? project = _db.Projects.Include(j => j.Skills).SingleOrDefault(p => p.Id == id);
 			if (project != null)
 			{
 				project.Title = newProject.Title;
 				project.Description = newProject.Description;
 				project.CategoryId = newProject.CategoryId;
-				if (newProject.Skills != null)
+				if (newProject.RequiredSkillsId != null)
 				{
 					project.Skills = new List<Skill>();
-					foreach(var skill in newProject.Skills)
+					foreach(var skillId in newProject.RequiredSkillsId)
 					{
+						Skill skill = _db.Skills.Find(skillId)!;
 						if (!project.Skills.Contains(skill))
 						{
 							project.Skills.Add(skill);
@@ -96,6 +105,7 @@ namespace src.Repository
 			}
 			return false;
 		}
+		
 		/// <summary>
 		/// Delete the project and return true if found, return false if not found
 		/// </summary>
@@ -103,7 +113,7 @@ namespace src.Repository
 		/// <returns></returns>
 		public bool Delete(int id)
 		{
-			var project = Read(id);
+			var project = _db.Projects.Find(id);
 			if (project != null)
 			{
 				_db.Remove(project);

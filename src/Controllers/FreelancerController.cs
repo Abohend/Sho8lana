@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using src.Models;
-using src.Models.Dto.Client;
 using src.Models.Dto.Freelancer;
 using src.Repository;
-using src.Services;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -49,7 +46,7 @@ namespace src.Controllers
 		[HttpGet]
 		public IActionResult Get()
 		{
-			var freelancers = _freelancerRepo.ReadAllWithSkills();
+			var freelancers = _freelancerRepo.ReadAll();
 
 			// update image pathes
 			foreach (var freelancer in freelancers!)
@@ -64,7 +61,7 @@ namespace src.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(string id)
 		{
-			var freelancer = _freelancerRepo.ReadWithSkills(id);
+			var freelancer = _freelancerRepo.ReadFull(id);
 			if (freelancer != null)
 			{
 				freelancer.ImageUrl = GetImageUrl(freelancer.ImageUrl);

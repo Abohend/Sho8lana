@@ -1,13 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using src.Models;
 using src.Models.Dto.Project;
 using src.Repository;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace src.Controllers
 {
@@ -18,15 +15,14 @@ namespace src.Controllers
 	{
 		private readonly ProjectRepository _projectRepo;
 		private readonly CategoryRepository _categoryRepo;
-		private readonly IMapper _mapper;
 		private readonly SkillRepository _skillRepo;
 
-		public ProjectController(ProjectRepository projectRepo, CategoryRepository categoryRepo, IMapper mapper
-			, SkillRepository skillRepository)
+		public ProjectController(ProjectRepository projectRepo, 
+			CategoryRepository categoryRepo,
+			SkillRepository skillRepository)
 		{
 			_projectRepo = projectRepo;
 			_categoryRepo = categoryRepo;
-			_mapper = mapper;
 			this._skillRepo = skillRepository;
 		}
 
@@ -41,6 +37,7 @@ namespace src.Controllers
 		}
 		#endregion
 
+
 		// GET: api/<ProjectController>
 		[AllowAnonymous]
 		[HttpGet]
@@ -48,9 +45,8 @@ namespace src.Controllers
 		{
 			try
 			{
-				List<Project>? projects = _projectRepo.GetFullData();
-				var projectsDto = _mapper.Map<List<GetProjectDto>?>(projects);
-				return Ok(new Response(200, result: projectsDto));
+				var projects = _projectRepo.ReadAll();
+				return Ok(new Response(200, result: projects));
 			}
 			catch (Exception ex)
 			{
@@ -58,18 +54,20 @@ namespace src.Controllers
 			}
 		}
 
+
 		// GET api/<ProjectController>/5
 		[AllowAnonymous]
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var project = _mapper.Map<GetProjectDto>(_projectRepo.GetWithCategoryAndClient(id));
+			var project = _projectRepo.ReadWithSkills(id);
 			if (project == null)
 			{
 				return NotFound(new Response(404, ["Project not found"]));
 			}
 			return Ok(new Response(200, project));
 		}
+
 
 		//POST api/<ProjectController>
 		[HttpPost]
@@ -82,33 +80,36 @@ namespace src.Controllers
 				return BadRequest(new Response(404, ["Category id is not valid"]));
 			}
 
-			var project = _mapper.Map<Project>(projectDto);
-			project.ClientId = GetId();
+			List<Skill>? skills = null;
+
 			if (projectDto.RequiredSkillsId != null)
 			{
+				skills = new List<Skill>();
 				foreach (var skillId in projectDto.RequiredSkillsId)
 				{
 					var skill = _skillRepo.ReadById(skillId);
-					if (skill != null)
-					{
-						project.Skills!.Add(skill);
-					}
-					else
+					if (skill == null)
 					{
 						return BadRequest(new Response(404, ["Enter valid skills"]));
 					}
+					else
+					{
+						skills.Add(skill);
+					}
 				}
 			}
+
 			//ToDo disable automapping for category and assign categoryId here.
-			_projectRepo.Create(project);
+			_projectRepo.Create(GetId(), skills, projectDto);
 			return Ok(new Response(201));
 		}
+
 
 		// PUT api/<ProjectController>/5
 		[HttpPut("{id}")]
 		public IActionResult Put(int id, [FromBody] CreateProjectDto projectDto)
 		{
-			// check category
+			// check category existence
 			var category = _categoryRepo.Get(projectDto.CategoryId);
 			if (category == null)
 			{
@@ -116,29 +117,27 @@ namespace src.Controllers
 			}
 			try
 			{
-				var project = _mapper.Map<Project>(projectDto);
+				var project = _projectRepo.Read(id);
+				if (project == null)
+					return NotFound(new Response(404, ["Project not found"]));
 
+				// check the updator
 				if (GetRole() == "Client" && GetId() != project.ClientId)
 				{
-					return Unauthorized(new Response(401, ["Not Allowed to Delete this Project"]));
+					return Unauthorized(new Response(401, ["Not Allowed to Update this Project"]));
 				}
 
+				// validating skills id
 				foreach (var skillId in projectDto.RequiredSkillsId!)
 				{
 					var skill = _skillRepo.ReadById(skillId);
-					if (skill != null)
-					{
-						project.Skills!.Add(skill);
-					}
-					else
+					if (skill == null)
 					{
 						return BadRequest(new Response(404, ["Enter valid skills"]));
 					}
 				}
 
-				var result = _projectRepo.Update(id, project);
-				if (!result) 
-					return NotFound(new Response(404, ["Project not found"]));
+				var result = _projectRepo.Update(id, projectDto);
 
 				return Ok(new Response(201));
 			}
@@ -147,6 +146,7 @@ namespace src.Controllers
 				return BadRequest(new Response(400, [e.ToString()]));
 			}
 		}
+
 
 		// DELETE api/<ProjectController>/5
 		[Authorize(Roles = "Admin, Client")]
