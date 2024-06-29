@@ -73,15 +73,15 @@ namespace src.Controllers
 			}
 
 			// Psuado Payment
-			if (replayDto.IsAccepted == true)
-			{
-				var result = _clientRepository.UpdateBalance(userId, -projectProposal.Price); // Todo: Will be changed later "Payment Gateway process"
-				if (!result)
-				{
-					return BadRequest(new Response(400, ["Cann't complete due to insufficient balance"])); 
-				}
+			//if (replayDto.IsAccepted == true)
+			//{
+			//	var result = _clientRepository.UpdateBalance(userId, -projectProposal.Price); // Todo: Will be changed later "Payment Gateway process"
+			//	if (!result)
+			//	{
+			//		return BadRequest(new Response(400, ["Cann't complete due to insufficient balance"])); 
+			//	}
 			
-			}
+			//}
 
 			// Create Replay
 			_proposalReplayRepo.Create(replayDto, projectProposalId);

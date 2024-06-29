@@ -51,12 +51,15 @@ namespace src.Repository
 			return _mapper.Map<List<ReadJobDto>?>(jobs);
 		}
 
-		// Todo
-		public string? ReadJobTaker(Job job)
+		public string? ReadJobTaker(int jobId)
 		{
-			if (job.Proposals != null && job.Proposals.Any(p => p.ProposalReplay!.IsAccepted) == true)
+			var job = _context.Jobs
+				.Include(j => j.Proposals)!
+				.ThenInclude(p => p.ProposalReplay)
+				.First(j => j.Id == jobId);
+			if (job.Proposals != null && job.Proposals.First(p => p.ProposalReplay?.IsAccepted == true) != null)
 			{
-				return job.Proposals.First(p => p.ProposalReplay!.IsAccepted == true).FreelancerId;
+				return job.Proposals.First(p => p.ProposalReplay?.IsAccepted == true).FreelancerId;
 			}
 			return null;
 		}
