@@ -46,13 +46,10 @@ namespace src.Repository
 				.FirstOrDefault(j => j.Id == id));
 		}
 
-		public List<ReadProjectDto>? ReadAll(string freelancerId)
+		public List<int>? ReadAll(string freelancerId)
 		{
-			var projects = _db.Projects
-				.Include(p => p.Proposals)
-				.Where(p => p.Proposals!.First(p => p.ProposalReplay!.IsAccepted == true).FreelancerId == freelancerId)
-				.ToList();
-			return _mapper.Map<List<ReadProjectDto>?>(projects);
+			var acceptedProposals = _projectProposalRepo.ReadAccepted(freelancerId);
+			return acceptedProposals?.Select(p => p.WorkId).ToList();
 		}
 
 		public string? ReadProjectTaker(int projectId)

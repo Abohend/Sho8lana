@@ -41,7 +41,7 @@ namespace src.Controllers
 		}
 
 
-		[HttpPost("/project/{projectProposalId:int}")]
+		[HttpPost("project/{projectProposalId:int}")]
 		public IActionResult Post(int projectProposalId, ProposalReplayDto replayDto)
 		{
 			/*
@@ -89,7 +89,7 @@ namespace src.Controllers
 		}
 
 
-		[HttpPost("/job/{jobProposalId:int}")]
+		[HttpPost("job/{jobProposalId:int}")]
 		public IActionResult PostJobProposalReplay(int jobProposalId, ProposalReplayDto replayDto)
 		{
 			/*

@@ -20,25 +20,25 @@ namespace src.Repository
 			this._imageService = imageService;
 		}
 
-		public List<GetClientDto>? Read()
+		public List<ReadClientDto>? Read()
 		{
 			var clients = _db.Clients.ToList();
-			return _mapper.Map<List<GetClientDto>?>(clients);
+			return _mapper.Map<List<ReadClientDto>?>(clients);
 		}
-		public List<GetClientDto>? ReadWithProjects() 
+		public List<ReadClientDto>? ReadWithProjects() 
 		{
 			var clients = _db.Clients.Include(c => c.Projects).ToList();
-			return _mapper.Map<List<GetClientDto>?>(clients);
+			return _mapper.Map<List<ReadClientDto>?>(clients);
 		}
-		public GetClientDto? Read(string id)
+		public ReadClientDto? Read(string id)
 		{
 			var client = _db.Clients.Find(id);
-			return _mapper.Map<GetClientDto>(client);
+			return _mapper.Map<ReadClientDto>(client);
 		}
-		public GetClientDto? ReadWithProjects(string id)
+		public ReadClientDto? ReadWithProjects(string id)
 		{
 			var client = _db.Clients.Include(c => c.Projects).SingleOrDefault(c => c.Id == id);
-			return _mapper.Map<GetClientDto?>(client);
+			return _mapper.Map<ReadClientDto?>(client);
 		}
 
 		public bool Update(string id, UpdateClientDto newClient)

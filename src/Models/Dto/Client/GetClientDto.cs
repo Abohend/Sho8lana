@@ -2,7 +2,7 @@
 
 namespace src.Models.Dto.Client
 {
-    public class GetClientDto
+    public class ReadClientDto
     {
         public string? Id { get; set; }
         public string? Email { get; set; }

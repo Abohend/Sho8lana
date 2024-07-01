@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace src.Controllers
 {
-    [Authorize(Roles = "Client")]
+    //[Authorize(Roles = "Client")]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ProjectController : ControllerBase
@@ -54,10 +54,9 @@ namespace src.Controllers
 			}
 		}
 
-
 		// GET api/<ProjectController>/5
 		[AllowAnonymous]
-		[HttpGet("{id}")]
+		[HttpGet("{id}:int")]
 		public IActionResult Get(int id)
 		{
 			var project = _projectRepo.ReadWithSkills(id);
@@ -68,9 +67,22 @@ namespace src.Controllers
 			return Ok(new Response(200, project));
 		}
 
+        [Authorize(Roles = "Freelancer")]
+        [HttpGet("{freelancerId}")]
+		// return all project for a freelancer
+		public IActionResult Get(string freelancerId)
+		{
+			if (GetId() != freelancerId)
+			{
+				return BadRequest(new Response(401, ["You are not allowed to view projects of other freelancers"]));
+			}
+			var projects = _projectRepo.ReadAll(freelancerId);
+			return Ok(new Response(200, projects));
+		}
 
-		//POST api/<ProjectController>
-		[HttpPost]
+        //POST api/<ProjectController>
+        [Authorize(Roles = "Client")]
+        [HttpPost]
 		public IActionResult Post([FromBody] CreateProjectDto projectDto)
 		{
 			// check Category
@@ -105,8 +117,9 @@ namespace src.Controllers
 		}
 
 
-		// PUT api/<ProjectController>/5
-		[HttpPut("{id}")]
+        // PUT api/<ProjectController>/5
+        [Authorize(Roles = "Client")]
+        [HttpPut("{id}")]
 		public IActionResult Put(int id, [FromBody] CreateProjectDto projectDto)
 		{
 			// check category existence

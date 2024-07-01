@@ -20,7 +20,7 @@ namespace src
             CreateMap<RegisterFreelancerDto, Freelancer>()
                 .ForMember(des => des.UserName, opt => opt.MapFrom(src => src.Email));
 
-            CreateMap<Client, GetClientDto>()
+            CreateMap<Client, ReadClientDto>()
                 .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.ImagePath))
                 .ForMember(des => des.ProjectsId, opt => opt.MapFrom(src => src.Projects!.Select(p => p.Id)));
             CreateMap<UpdateClientDto, Client>();
