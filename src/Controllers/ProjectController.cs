@@ -68,7 +68,7 @@ namespace src.Controllers
 		}
 
         [Authorize(Roles = "Freelancer")]
-        [HttpGet("{freelancerId}")]
+        [HttpGet("freelancer/{freelancerId}")]
 		// return all project for a freelancer
 		public IActionResult Get(string freelancerId)
 		{
