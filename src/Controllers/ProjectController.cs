@@ -56,7 +56,7 @@ namespace src.Controllers
 
 		// GET api/<ProjectController>/5
 		[AllowAnonymous]
-		[HttpGet("{id}:int")]
+		[HttpGet("{id:int}")]
 		public IActionResult Get(int id)
 		{
 			var project = _projectRepo.ReadWithSkills(id);
