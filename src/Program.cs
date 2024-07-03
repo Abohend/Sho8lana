@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using src.Data;
+using src.Hubs;
 using src.Models;
 using src.Models.Dto;
 using src.Repository;
@@ -24,7 +25,7 @@ namespace src
 			// Add services to the container.
 
 			builder.Services.AddControllers();
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddSignalR();
 			builder.Services.AddEndpointsApiExplorer();
 
 			builder.Services.AddSwaggerGen();
@@ -157,6 +158,8 @@ namespace src
 			app.UseAuthentication();
 
 			app.UseAuthorization();
+
+			app.MapHub<ChatHub>("/chat");
 
 			app.MapControllers();
 

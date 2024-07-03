@@ -2,6 +2,7 @@
 using src.Models;
 using src.Models.Dto;
 using src.Models.Dto.Category;
+using src.Models.Dto.Chat;
 using src.Models.Dto.Client;
 using src.Models.Dto.Freelancer;
 using src.Models.Dto.Job;
@@ -51,7 +52,15 @@ namespace src
 
             CreateMap<CreateJobDto, Job>();
             CreateMap<Job, ReadJobDto>();
-                //.ForMember(dto => dto.FreelancerId, opt => opt.MapFrom(j => j.Proposals!.FirstOrDefault(p => p.ProposalReplay!.IsAccepted == true)!.FreelancerId));
+
+            CreateMap<CreateGroupChatDto, GroupChat>();
+            
+            CreateMap<CreateMessageDto, Message>()
+                .ForMember(m => m.ReceiverUserId, opt => opt.Condition(dto => dto.MessageType == MessageType.Individual))
+                .ForMember(m => m.ReceiverUserId, opt => opt.MapFrom(dto => dto.ReceiverId))
+                .ForMember(m => m.ReceiverGroupId, opt => opt.Condition(dto => dto.MessageType == MessageType.Group))
+                .ForMember(m => m.ReceiverGroupId, opt => opt.MapFrom(dto => dto.ReceiverId));
+                
 		}
 
 	}
