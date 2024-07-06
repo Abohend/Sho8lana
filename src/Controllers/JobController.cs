@@ -39,7 +39,7 @@ namespace src.Controllers
 			{
 				return NotFound(new Response(404, ["Invalid project Id"]));
 			}
-			else if (_projectRepo.ReadProjectTaker(projectId) != GetId())
+			else if (_projectRepo.ReadProjectTakerId(projectId) != GetId())
 			{
 				return BadRequest(new Response(401, ["Not authorized to Get jobs from this project."]));
 			}
@@ -74,7 +74,7 @@ namespace src.Controllers
 			{
 				return NotFound(new Response(404, ["Invalid project Id"]));
 			}
-			else if (_projectRepo.ReadProjectTaker(projectId) != GetId())
+			else if (_projectRepo.ReadProjectTakerId(projectId) != GetId())
 			{
 				return BadRequest(new Response(401, ["Not authorized to add jobs to this project."]));
 			}
@@ -89,11 +89,11 @@ namespace src.Controllers
 		{
 			// only allowed for freelancer who created it and must sure that no freelancer is assigned to it
 			var job = _jobRepo.Read(id);
-			if (_projectRepo.ReadProjectTaker(job.ProjectId) != GetId())
+			if (_projectRepo.ReadProjectTakerId(job.ProjectId) != GetId())
 			{
 				return BadRequest(new Response(401, ["Invalid Job Id"]));
 			}
-			else if (_jobRepo.ReadJobTaker(id) != null)
+			else if (_jobRepo.ReadJobTakerId(id) != null)
 			{
 				return BadRequest(new Response(401, ["Not authorized to delete jobs that is already assigned to freelancers"]));
 
@@ -106,5 +106,6 @@ namespace src.Controllers
 			}
 			return BadRequest(new Response(400, ["Something went wrong!"]));
 		}
+	
 	}
 }

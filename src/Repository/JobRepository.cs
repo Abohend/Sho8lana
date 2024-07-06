@@ -10,12 +10,14 @@ namespace src.Repository
 	{
 		private readonly Context _context;
 		private readonly IMapper _mapper;
+        private readonly ProjectRepository projectRepo;
 
-		public JobRepository(Context context, IMapper mapper)
+        public JobRepository(Context context, IMapper mapper, ProjectRepository projectRepo)
         {
 			this._context = context;
 			this._mapper = mapper;
-		}
+            this.projectRepo = projectRepo;
+        }
 
 		public void Create(int projectId,List<CreateJobDto> JobsDto)
 		{
@@ -51,7 +53,14 @@ namespace src.Repository
 			return _mapper.Map<List<ReadJobDto>?>(jobs);
 		}
 
-		public string? ReadJobTaker(int jobId)
+		public string ReadJobOwnerId(int jobId)
+        {
+            var job = _context.Jobs.Single(j => j.Id == jobId);
+			// owner of the job is the project taker
+            return projectRepo.ReadProjectTakerId(job.ProjectId)!;
+        }
+
+		public string? ReadJobTakerId(int jobId)
 		{
 			var job = _context.Jobs
 				.Include(j => j.Proposals)!

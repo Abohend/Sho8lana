@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using src.Data;
 
@@ -11,9 +12,11 @@ using src.Data;
 namespace src.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240704202731_DeliveredProductMigration")]
+    partial class DeliveredProductMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,9 +310,9 @@ namespace src.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("src.Models.DeliveredJob", b =>
+            modelBuilder.Entity("src.Models.DeliveredProduct", b =>
                 {
-                    b.Property<int>("JobId")
+                    b.Property<int>("WorkId")
                         .HasColumnType("int");
 
                     b.Property<string>("GitHubUrl")
@@ -319,26 +322,9 @@ namespace src.Migrations
                     b.Property<bool>("Verified")
                         .HasColumnType("bit");
 
-                    b.HasKey("JobId");
+                    b.HasKey("WorkId");
 
-                    b.ToTable("DeliveredJobs");
-                });
-
-            modelBuilder.Entity("src.Models.DeliveredProject", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GitHubUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Verified")
-                        .HasColumnType("bit");
-
-                    b.HasKey("ProjectId");
-
-                    b.ToTable("DeliveredProjects");
+                    b.ToTable("DeliveredProducts");
                 });
 
             modelBuilder.Entity("src.Models.GroupChat", b =>
@@ -694,24 +680,21 @@ namespace src.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("src.Models.DeliveredJob", b =>
+            modelBuilder.Entity("src.Models.DeliveredProduct", b =>
                 {
                     b.HasOne("src.Models.Job", "Job")
-                        .WithOne("DeliveredJob")
-                        .HasForeignKey("src.Models.DeliveredJob", "JobId")
+                        .WithOne("DeliveredProduct")
+                        .HasForeignKey("src.Models.DeliveredProduct", "WorkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("src.Models.Project", "Project")
+                        .WithOne("DeliveredProduct")
+                        .HasForeignKey("src.Models.DeliveredProduct", "WorkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Job");
-                });
-
-            modelBuilder.Entity("src.Models.DeliveredProject", b =>
-                {
-                    b.HasOne("src.Models.Project", "Project")
-                        .WithOne("DeliveredProject")
-                        .HasForeignKey("src.Models.DeliveredProject", "ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Project");
                 });
@@ -884,14 +867,14 @@ namespace src.Migrations
 
             modelBuilder.Entity("src.Models.Job", b =>
                 {
-                    b.Navigation("DeliveredJob");
+                    b.Navigation("DeliveredProduct");
 
                     b.Navigation("Proposals");
                 });
 
             modelBuilder.Entity("src.Models.Project", b =>
                 {
-                    b.Navigation("DeliveredProject");
+                    b.Navigation("DeliveredProduct");
 
                     b.Navigation("Jobs");
 

@@ -52,7 +52,7 @@ namespace src.Repository
 			return acceptedProposals?.Select(p => p.WorkId).ToList();
 		}
 
-		public string? ReadProjectTaker(int projectId)
+		public string? ReadProjectTakerId(int projectId)
 		{
 			var acceptedProposal = _projectProposalRepo.ReadAccepted(projectId);
 			if (acceptedProposal != null)

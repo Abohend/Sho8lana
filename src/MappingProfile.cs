@@ -60,7 +60,8 @@ namespace src
                 .ForMember(m => m.ReceiverUserId, opt => opt.MapFrom(dto => dto.ReceiverId))
                 .ForMember(m => m.ReceiverGroupId, opt => opt.Condition(dto => dto.MessageType == MessageType.Group))
                 .ForMember(m => m.ReceiverGroupId, opt => opt.MapFrom(dto => dto.ReceiverId));
-                
+
+            CreateMap<DeliveredProduct, ReadDeliveredProductDto>();
 		}
 
 	}

@@ -23,6 +23,9 @@ namespace src.Models
 		public List<ProjectProposal>? Proposals { get; set; }
 
 		public List<Job>? Jobs { get; set; }
+
+		public DeliveredProject? DeliveredProject { get; set; }
+
 		// Todo: Team realtion ship (every Project has a team and every team has one Project)
 		// Todo: Payment reationship
 		#endregion

@@ -76,6 +76,8 @@ namespace src
 			builder.Services.AddScoped<JobProposalRepository>();
 			builder.Services.AddScoped<ProposalReplayRepository>();
 			builder.Services.AddScoped<JobRepository>();
+			builder.Services.AddScoped<ChatRepository>();
+			builder.Services.AddScoped<DeliveredProductRepository>();
 
 			builder.Services.AddCors(options =>
 			{

@@ -18,11 +18,14 @@ namespace src.Data
 		public DbSet<ProjectProposal> ProjectsProposal { get; set; }
 		public DbSet<JobProposal> JobsProposal { get; set; }
 		public DbSet<ProposalReplay> ProposalReplay { get; set; }
+
 		#region chat
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<GroupChat> GroupChats { get; set; } 
 		#endregion
 		
+		public DbSet<DeliveredJob> DeliveredJobs { get; set; }
+		public DbSet<DeliveredProject> DeliveredProjects { get; set; }			
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Category>()
@@ -90,9 +93,25 @@ namespace src.Data
                 .WithMany(e => e.Messages)
                 .HasForeignKey(e => e.ReceiverGroupId)
                 .OnDelete(DeleteBehavior.Restrict);
-            #endregion
+			#endregion
 
-            base.OnModelCreating(builder);
+			//builder.Entity<DeliveredProduct>()
+			//	.HasOne(DeliveredProduct => DeliveredProduct.Project)
+			//	.WithOne(Project => Project.DeliveredProduct)
+			//	.HasForeignKey<DeliveredProduct>(DeliveredProduct => DeliveredProduct.WorkId);
+
+			//builder.Entity<DeliveredProduct>()
+			//	.HasOne(DeliveredProduct => DeliveredProduct.Job)
+			//	.WithOne(Job => Job.DeliveredProduct)
+			//	.HasForeignKey<DeliveredProduct>(DeliveredProduct => DeliveredProduct.WorkId);
+
+			//builder.Entity<DeliveredProduct>()
+			//	.HasKey(DeliveredProduct => new { DeliveredProduct.WorkId, DeliveredProduct.WorkType });
+
+			//builder.Entity<DeliveredProduct>()
+			//	.HasKey(dp => new {dp.ProjectId, dp.JobId, dp.WorkType });
+
+			base.OnModelCreating(builder);
 		}
 	}
 }

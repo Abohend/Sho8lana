@@ -47,7 +47,7 @@ namespace src.Controllers
 			}
 
 			// Owner of project check
-			var projectOwnerId = _projectRepo.ReadProjectTaker(job.ProjectId);
+			var projectOwnerId = _projectRepo.ReadProjectTakerId(job.ProjectId);
 			if (projectOwnerId != GetId())
 			{
 				return BadRequest(new Response(401, ["Not authorized to access job proposals of a project you didn't take"]));
@@ -78,23 +78,23 @@ namespace src.Controllers
 			{
 				return BadRequest(new Response(404, ["specified job not found"]));
 			}
-			var projectTakerId = _projectRepo.ReadProjectTaker(job.ProjectId);
+			var projectTakerId = _projectRepo.ReadProjectTakerId(job.ProjectId);
 			if ( projectTakerId != GetId() )
 			{
 				return BadRequest(new Response(401, ["Not authorized to create proposals for job of a project you don't own"]));
 			}
 
 			//TODO: Payment "current is simple"
-			var senderFreelancer = _freelancerRepo.Read(projectTakerId);
+			//var senderFreelancer = _freelancerRepo.Read(projectTakerId);
 
-			if (senderFreelancer!.Balance < jobProposalDto.Price)
-			{
-				return BadRequest(new Response(401, ["Cann't complete operation due insufficient Balance"]));
-			}
-			else
-			{
-				senderFreelancer.Balance -= jobProposalDto.Price; // will not affect anything //Todo : Payment
-			}
+			//if (senderFreelancer!.Balance < jobProposalDto.Price)
+			//{
+			//	return BadRequest(new Response(401, ["Cann't complete operation due insufficient Balance"]));
+			//}
+			//else
+			//{
+			//	senderFreelancer.Balance -= jobProposalDto.Price; // will not affect anything //Todo : Payment
+			//}
 			// ToDo: Think of approach to release this payment to freelancer when the job is compeleted
 			jobProposalDto.WorkId = jobId;
 			_jobProposalRepo.Create(jobProposalDto);
