@@ -45,6 +45,15 @@ namespace src.Repository
 				.Include (j => j.Skills)
 				.FirstOrDefault(j => j.Id == id));
 		}
+		
+		public List<ReadProjectDto>? ReadWithSkills(string title)
+		{
+			// return all the projects with title like name
+			return _mapper.Map<List<ReadProjectDto>?>(_db.Projects
+                .Include(j => j.Skills)
+                .Where(j => j.Title.Contains(title))
+                .ToList());
+		}
 
 		public List<int>? ReadAll(string freelancerId)
 		{

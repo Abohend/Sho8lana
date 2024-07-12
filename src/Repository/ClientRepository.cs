@@ -25,11 +25,22 @@ namespace src.Repository
 			var clients = _db.Clients.ToList();
 			return _mapper.Map<List<ReadClientDto>?>(clients);
 		}
+	
 		public List<ReadClientDto>? ReadWithProjects() 
 		{
 			var clients = _db.Clients.Include(c => c.Projects).ToList();
 			return _mapper.Map<List<ReadClientDto>?>(clients);
 		}
+	
+		public List<ReadClientDto>? ReadWithProjectsByName(string name) 
+		{
+			var clients = _db.Clients
+				.Include(c => c.Projects)
+				.Where(c => c.Name!.Contains(name))
+				.ToList();
+			return _mapper.Map<List<ReadClientDto>?>(clients);
+		}
+
 		public ReadClientDto? Read(string id)
 		{
 			var client = _db.Clients.Find(id);

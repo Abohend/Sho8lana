@@ -65,6 +65,14 @@ namespace src.Controllers
 				return NotFound(new Response(404, ["Project not found"]));
 			}
 			return Ok(new Response(200, project));
+		}		
+		
+		[AllowAnonymous]
+		[HttpGet("{name}")]
+		public IActionResult GetByName(string name)
+		{
+			var projects = _projectRepo.ReadWithSkills(name);
+			return Ok(new Response(200, projects));
 		}
 
         [Authorize(Roles = "Freelancer")]

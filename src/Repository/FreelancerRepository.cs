@@ -39,6 +39,16 @@ namespace src.Repository
 			var freelancers = _db.Freelancers.Include(f => f.Skills).ToList();
 			return _mapper.Map<List<ReadFreelancerDto>?>(freelancers);
 		}
+
+		public List<ReadFreelancerDto>? ReadAllByName(string name)
+		{
+			var freelancers = _db.Freelancers
+				.Include(f => f.Skills)
+				.Where(f => f.Name!.Contains(name))
+				.ToList();
+			return _mapper.Map<List<ReadFreelancerDto>?>(freelancers);
+		}
+
 		public ReadFreelancerDto? Read(string id)
 		{
 			var freelancer = _db.Freelancers.Find(id);

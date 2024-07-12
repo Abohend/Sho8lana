@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace src.Controllers
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class ClientController : ControllerBase
 	{
@@ -39,10 +39,25 @@ namespace src.Controllers
 
 		// GET: api/<ClientController>
 		[Authorize(Roles = "Admin")]
-        [HttpGet]
+		[HttpGet]
 		public IActionResult Get()
 		{
 			var clients = _clientRepo.ReadWithProjects();
+
+			// update image pathes
+			foreach (var client in clients!)
+			{
+				client.ImageUrl = GetImageUrl(client.ImageUrl);
+			}
+
+			return Ok(new Response(200, clients));
+		}
+
+
+		[HttpGet("search/{name}")]
+		public IActionResult GetByName(string name)
+		{
+			var clients = _clientRepo.ReadWithProjectsByName(name);
 
 			// update image pathes
 			foreach (var client in clients!)

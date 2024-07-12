@@ -56,6 +56,20 @@ namespace src.Controllers
 
 			return Ok(new Response(200, freelancers));
 		}
+		
+		[HttpGet("search/{name}")]
+		public IActionResult GetByName(string name)
+		{
+			var freelancers = _freelancerRepo.ReadAllByName(name);
+
+			// update image pathes
+			foreach (var freelancer in freelancers!)
+			{
+				freelancer.ImageUrl = GetImageUrl(freelancer.ImageUrl);
+			}
+
+			return Ok(new Response(200, freelancers));
+		}
 
 		// GET api/<FreelancerController>/5
 		[HttpGet("{id}")]
@@ -68,7 +82,7 @@ namespace src.Controllers
 				return Ok(new Response(200, freelancer));
 			}
 			return BadRequest(new Response(404, ["Freelancer not found"]));
-		}
+		}		
 
 		// PUT api/<FreelancerController>/5
 		[HttpPut("{id}")]
