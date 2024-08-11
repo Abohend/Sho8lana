@@ -116,9 +116,10 @@ namespace src
 
 			var app = builder.Build();
 
-			#region Seed roles & default admin
+			#region Seed Data
 			using (var scope = app.Services.CreateScope())
 			{
+				// roles
 				var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 				if (!await roleManager.RoleExistsAsync("Admin"))
 				{
@@ -129,6 +130,7 @@ namespace src
 					}
 				}
 
+				// admin
 				var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 				if (await userManager.FindByEmailAsync(_config["Admin:Email"]!) == null)
 				{
@@ -140,12 +142,79 @@ namespace src
 					await userManager.CreateAsync(admin, _config["Admin:Password"]!);
 					await userManager.AddToRoleAsync(admin, "Admin");
 				}
-			}
+
+				// clients
+				var client1 = new Client()
+				{
+					Id = "1",
+					Name = "John Snow",
+					Email = "client@sho8lana.com",
+					UserName = "client@sho8lana.com",
+					PhoneNumber = "01000000000",
+					Balance = 1000,
+					ImagePath = "client/1.webp"
+				};
+                var client2 = new Client()
+                {
+                    Id = "2",
+                    Name = "Robb Stark",
+                    Email = "client2@sho8lana.com",
+                    UserName = "client2@sho8lana.com",
+                    PhoneNumber = "01000000001",
+                    Balance = 1000,
+                    ImagePath = "client/2.avif"
+                };
+                var clientRepo = scope.ServiceProvider.GetRequiredService<AccountRepository>();
+				if (await userManager.FindByEmailAsync(client1.Email) == null)
+					await clientRepo.RegisterClientAsync(client1, "Mm@123");
+                if (await userManager.FindByEmailAsync(client2.Email) == null)
+                    await clientRepo.RegisterClientAsync(client2, "Mm@123");
+
+				// freelancers
+				var freelancer1 = new Freelancer()
+				{
+					Id = "3",
+					Name = "Khal Drogo",
+					Email = "freelancer1@sho8lana.com",
+					UserName = "freelancer1@sho8lana.com",
+					PhoneNumber = "01000000002",
+					Balance = 1000,
+					ImagePath = "freelancer/2.webp",
+					CategoryId = 3
+				};
+				var freelancer2 = new Freelancer()
+				{
+					Id = "4",
+					Name = "Red Viper",
+					Email = "freelancer2@sho8lana.com",
+					UserName = "freelancer2@sho8lana.com",
+					PhoneNumber = "01000000002",
+					Balance = 1000,
+					ImagePath = "freelancer/4.webp",
+					CategoryId = 3
+				};
+                if (await userManager.FindByEmailAsync(freelancer1.Email) == null)
+                    await clientRepo.RegisterFreelancerAsync(freelancer1, "Mm@123");
+                if (await userManager.FindByEmailAsync(freelancer2.Email) == null)
+                    await clientRepo.RegisterFreelancerAsync(freelancer2, "Mm@123");
+
+				// projects
+				var project1 = new Project()
+				{
+					Id = 1,
+					ClientId = client1.Id,
+					Title = "Develop a website",
+					Description = "Develop a website for my company",
+					ExpectedBudget = 1000,
+					CategoryId = 3,
+					ExpectedDuration = new Duration(10, 2)
+				};
+            }
 			#endregion
 
-			#region Middlewares
-			// Configure the HTTP request pipeline.
-			if (app.Environment.IsDevelopment())
+            #region Middlewares
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
 			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
