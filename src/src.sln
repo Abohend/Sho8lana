@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src", "src.csproj", "{832ED518-C054-4024-876D-ACDE59FD879D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sho8lana.API", "Sho8lana.API.csproj", "{832ED518-C054-4024-876D-ACDE59FD879D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sho8lana.DataAccess", "..\Sho8lana.DataAccess\Sho8lana.DataAccess.csproj", "{DEAE5CB4-8597-4A21-B153-F6082617B159}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sho8lana.Entities", "..\Sho8lana.Entities\Sho8lana.Entities.csproj", "{572E12F7-5DF8-4FF4-AA1D-ADAC0AA9485E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{832ED518-C054-4024-876D-ACDE59FD879D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{832ED518-C054-4024-876D-ACDE59FD879D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{832ED518-C054-4024-876D-ACDE59FD879D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEAE5CB4-8597-4A21-B153-F6082617B159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEAE5CB4-8597-4A21-B153-F6082617B159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEAE5CB4-8597-4A21-B153-F6082617B159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEAE5CB4-8597-4A21-B153-F6082617B159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{572E12F7-5DF8-4FF4-AA1D-ADAC0AA9485E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572E12F7-5DF8-4FF4-AA1D-ADAC0AA9485E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572E12F7-5DF8-4FF4-AA1D-ADAC0AA9485E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572E12F7-5DF8-4FF4-AA1D-ADAC0AA9485E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

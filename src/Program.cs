@@ -1,18 +1,17 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using src.Data;
-using src.Hubs;
-using src.Models;
-using src.Models.Dto;
-using src.Repository;
-using src.Services;
+using Sho8lana.API.Services;
+using Sho8lana.DataAccess.Data;
+using Sho8lana.DataAcess.Repositories;
+using Sho8lana.Entities.Models;
+using Sho8lana.DataAccess.Repositories;
 using System.Text;
+using Sho8lana.API.Hubs;
 
-namespace src
+namespace Sho8lana.API
 {
     public class Program
 	{
@@ -68,7 +67,7 @@ namespace src
 			builder.Services.AddScoped<Response>();
 			builder.Services.AddScoped<CategoryRepository>();
 			builder.Services.AddScoped<ProjectRepository>();
-			builder.Services.AddScoped<ImageService>();
+			builder.Services.AddScoped<FileService>();
 			builder.Services.AddScoped<SkillRepository>();
 			builder.Services.AddScoped<ClientRepository>();
 			builder.Services.AddScoped<FreelancerRepository>();
@@ -146,7 +145,7 @@ namespace src
 				// clients
 				var client1 = new Client()
 				{
-					Id = "1",
+					Id = Guid.NewGuid().ToString(),
 					Name = "John Snow",
 					Email = "client@sho8lana.com",
 					UserName = "client@sho8lana.com",
@@ -156,13 +155,13 @@ namespace src
 				};
                 var client2 = new Client()
                 {
-                    Id = "2",
+                    Id = Guid.NewGuid().ToString(),
                     Name = "Robb Stark",
                     Email = "client2@sho8lana.com",
                     UserName = "client2@sho8lana.com",
                     PhoneNumber = "01000000001",
                     Balance = 1000,
-                    ImagePath = "client/2.avif"
+                    ImagePath = "client/2.webp"
                 };
                 var clientRepo = scope.ServiceProvider.GetRequiredService<AccountRepository>();
 				if (await userManager.FindByEmailAsync(client1.Email) == null)
@@ -173,7 +172,7 @@ namespace src
 				// freelancers
 				var freelancer1 = new Freelancer()
 				{
-					Id = "3",
+					Id = Guid.NewGuid().ToString(),
 					Name = "Khal Drogo",
 					Email = "freelancer1@sho8lana.com",
 					UserName = "freelancer1@sho8lana.com",
@@ -184,31 +183,19 @@ namespace src
 				};
 				var freelancer2 = new Freelancer()
 				{
-					Id = "4",
+					Id = Guid.NewGuid().ToString(),
 					Name = "Red Viper",
 					Email = "freelancer2@sho8lana.com",
 					UserName = "freelancer2@sho8lana.com",
 					PhoneNumber = "01000000002",
 					Balance = 1000,
-					ImagePath = "freelancer/4.webp",
+					ImagePath = "freelancer/3.jpeg",
 					CategoryId = 3
 				};
                 if (await userManager.FindByEmailAsync(freelancer1.Email) == null)
                     await clientRepo.RegisterFreelancerAsync(freelancer1, "Mm@123");
                 if (await userManager.FindByEmailAsync(freelancer2.Email) == null)
                     await clientRepo.RegisterFreelancerAsync(freelancer2, "Mm@123");
-
-				// projects
-				var project1 = new Project()
-				{
-					Id = 1,
-					ClientId = client1.Id,
-					Title = "Develop a website",
-					Description = "Develop a website for my company",
-					ExpectedBudget = 1000,
-					CategoryId = 3,
-					ExpectedDuration = new Duration(10, 2)
-				};
             }
 			#endregion
 

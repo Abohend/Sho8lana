@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto.Job;
-using src.Repository;
 using System.Security.Claims;
+using Sho8lana.Entities.Models;
+using Sho8lana.DataAccess.Repositories;
+using Sho8lana.Entities.Models.Dto.Job;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
 	[Authorize(Roles = "Freelancer")]
 	[Route("api/[controller]")]

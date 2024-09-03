@@ -1,24 +1,25 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto.Client;
-using src.Repository;
-using src.Services;
+using Sho8lana.Entities.Models;
+using Sho8lana.Entities.Models.Dto.Client;
+using Sho8lana.DataAccess.Repositories;
 using System.Security.Claims;
+using Sho8lana.API.Services;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ClientController : ControllerBase
 	{
 		private readonly ClientRepository _clientRepo;
+        private readonly FileService _imageService;
 
-		public ClientController(ClientRepository clientRepository)
+        public ClientController(ClientRepository clientRepository, FileService imageService)
 		{
 			this._clientRepo = clientRepository;
-		}
+            this._imageService = imageService;
+        }
 
 		#region Helpers
 		private string? GetImageUrl(string? path)
@@ -90,7 +91,14 @@ namespace src.Controllers
 			{
 				return Unauthorized(new Response(StatusCodes.Status203NonAuthoritative, ["Not authorized"]));
 			}
-			_ = _clientRepo.Update(id, clientDto);
+
+			string? imagePath = null;
+            if (clientDto.Image != null)
+			{
+                _imageService.DeleteImage(_clientRepo.Read(id)!.ImageUrl);
+                imagePath = _imageService.UploadImage("client", clientDto.Image);
+            }
+            _ = _clientRepo.Update(id, clientDto, imagePath);
 			return Ok(new Response(200));
 		}
 
@@ -101,7 +109,8 @@ namespace src.Controllers
 		{
 			if (GetId() == id || GetRole() == "Admin")
 			{
-				_ = _clientRepo.Delete(id);
+                _imageService.DeleteImage(_clientRepo.Read(id)!.ImageUrl);
+                _ = _clientRepo.Delete(id);
 				return Ok(new Response(200));
 			}
 			else

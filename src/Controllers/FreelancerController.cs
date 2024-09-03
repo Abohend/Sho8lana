@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto.Freelancer;
-using src.Repository;
+using Sho8lana.DataAccess.Repositories;
 using System.Security.Claims;
+using Sho8lana.Entities.Models;
+using Sho8lana.Entities.Models.Dto.Freelancer;
+using Sho8lana.API.Services;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
@@ -15,15 +14,18 @@ namespace src.Controllers
 		private readonly FreelancerRepository _freelancerRepo;
 		private readonly SkillRepository _skillRepo;
 		private readonly CategoryRepository _categoryRepo;
+        private readonly FileService _fileService;
 
-		public FreelancerController(FreelancerRepository freelancerRepository
+        public FreelancerController(FreelancerRepository freelancerRepository
 			, SkillRepository skillRepository
-			, CategoryRepository categoryRepository)
+			, CategoryRepository categoryRepository
+			, FileService fileService)
 		{
 			this._freelancerRepo = freelancerRepository;
 			this._skillRepo = skillRepository;
 			this._categoryRepo = categoryRepository;
-		}
+            this._fileService = fileService;
+        }
 
 		#region Helpers
 		private string? GetImageUrl(string? path)
@@ -121,7 +123,13 @@ namespace src.Controllers
 			}
 
 			// Try Update
-			_freelancerRepo.Update(id, freelancerDto, newSkills);
+			string? imagePath = null;
+            if (freelancerDto.Image != null)
+			{
+                _fileService.DeleteImage(_categoryRepo.Get(categoryId!.Value)!.ImagePath);
+                imagePath = _fileService.UploadImage("freelancer", freelancerDto.Image);
+            }  
+            _freelancerRepo.Update(id, freelancerDto, newSkills, imagePath);
 			return Ok(new Response(200));
 		}
 
@@ -131,7 +139,8 @@ namespace src.Controllers
 		{
 			if (GetId() == id || GetRole() == "Admin")
 			{
-				_ = _freelancerRepo.Delete(id);
+				_fileService.DeleteImage(_freelancerRepo.Read(id)!.ImageUrl);
+                _ = _freelancerRepo.Delete(id);
 				return Ok(new Response(200));
 			}
 			else

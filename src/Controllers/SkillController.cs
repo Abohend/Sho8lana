@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto;
-using src.Repository;
+using Sho8lana.Entities.Models;
+using Sho8lana.DataAccess.Repositories;
+using Sho8lana.Entities.Models.Dto;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
 	[Authorize(Roles = "Admin")]
 	[Route("api/[controller]")]

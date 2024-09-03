@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto.Category;
-using src.Repository;
+using Sho8lana.API.Services;
+using Sho8lana.DataAccess.Repositories;
+using Sho8lana.Entities.Models;
+using Sho8lana.Entities.Models.Dto.Category;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
     [Authorize(Roles = "Admin")]
 	[Route("api/[controller]")]
@@ -16,12 +15,14 @@ namespace src.Controllers
 	{
 		private readonly CategoryRepository _categoryRepo;
 		private readonly IMapper _mapper;
+        private readonly FileService _imageService;
 
-		public CategoryController(CategoryRepository categoryRepo, IMapper mapper)
+        public CategoryController(CategoryRepository categoryRepo, IMapper mapper, FileService imageService)
 		{
 			this._categoryRepo = categoryRepo;
 			this._mapper = mapper;
-		}
+            this._imageService = imageService;
+        }
 
 		#region Helpers
 		private string? GetImageUrl(string path)
@@ -88,8 +89,9 @@ namespace src.Controllers
 		{
 			try
 			{
-				_categoryRepo.Create(categoryDto);
-				return Ok(new Response(201));
+                var imagePath = _imageService.UploadImage("category", categoryDto.Image);
+                _categoryRepo.Create(categoryDto, imagePath);
+                return Ok(new Response(201));
 			}
 			catch (Exception ex)
 			{
@@ -103,7 +105,13 @@ namespace src.Controllers
 		{
 			try
 			{
-				_categoryRepo.Update(id, categoryDto);
+				string? imagePath = null;
+				if (categoryDto.Image != null)
+				{
+					_imageService.DeleteImage(_categoryRepo.Get(id)!.ImagePath);
+                    imagePath = _imageService.UploadImage("category", categoryDto.Image);
+                }
+				_categoryRepo.Update(id, categoryDto, imagePath);
 				return Ok(new Response(201));
 			}
 			catch (Exception ex)
@@ -118,6 +126,7 @@ namespace src.Controllers
 		{
 			try
 			{
+				_imageService.DeleteImage(_categoryRepo.Get(id)!.ImagePath);
 				_categoryRepo.Delete(id);
 				return Ok(new Response(200));
 			}

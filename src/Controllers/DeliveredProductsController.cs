@@ -1,13 +1,10 @@
-﻿using Azure.Identity;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
-using src.Models;
-using src.Models.Dto;
-using src.Repository;
+using Sho8lana.Entities.Models;
+using Sho8lana.DataAccess.Repositories;
 using System.Security.Claims;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
     [Authorize(Roles = "Client, Freelancer")]
     [Route("api/[controller]")]

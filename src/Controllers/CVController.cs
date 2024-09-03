@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using src.Services;
+using Sho8lana.API.Services;
 using RestSharp;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CVController : ControllerBase
     {
-        private readonly ImageService _imgService;
+        private readonly FileService _fileService;
         private readonly IConfiguration _config;
 
-        public CVController(ImageService imgService, IConfiguration config)
+        public CVController(FileService imgService, IConfiguration config)
         {
-            this._imgService = imgService;
+            this._fileService = imgService;
             this._config = config;
         }
 

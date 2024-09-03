@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto;
-using src.Repository;
+using Sho8lana.DataAcess.Repositories;
+using Sho8lana.DataAccess.Repositories;
+using Sho8lana.Entities.Models.Dto;
+using Sho8lana.Entities.Models;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]

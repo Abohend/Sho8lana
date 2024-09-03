@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using src.Models;
-using src.Models.Dto.Project;
-using src.Repository;
+using Sho8lana.Entities.Models;
+using Sho8lana.DataAccess.Repositories;
 using System.Security.Claims;
+using Sho8lana.Entities.Models.Dto.Project;
 
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
     //[Authorize(Roles = "Client")]
 	[Route("api/[controller]")]

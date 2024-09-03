@@ -1,12 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using src.Data;
-using src.Models;
-using src.Models.Dto.Chat;
-using src.Repository;
+﻿using Microsoft.AspNetCore.SignalR;
+using Sho8lana.DataAccess.Data;
+using Sho8lana.Entities.Models;
+using Sho8lana.Entities.Models.Dto.Chat;
 
-namespace src.Hubs
+namespace Sho8lana.API.Hubs
 {
     //Todo: // authorize the hub
     public class ChatHub : Hub

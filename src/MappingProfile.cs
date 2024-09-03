@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using src.Models;
-using src.Models.Dto;
-using src.Models.Dto.Category;
-using src.Models.Dto.Chat;
-using src.Models.Dto.Client;
-using src.Models.Dto.Freelancer;
-using src.Models.Dto.Job;
-using src.Models.Dto.Project;
-using src.Models.Dto.Proposal;
-using src.Models.Dto.ProposalAndReplay;
+using Sho8lana.Entities.Models;
+using Sho8lana.Entities.Models.Dto;
+using Sho8lana.Entities.Models.Dto.Category;
+using Sho8lana.Entities.Models.Dto.Chat;
+using Sho8lana.Entities.Models.Dto.Client;
+using Sho8lana.Entities.Models.Dto.Freelancer;
+using Sho8lana.Entities.Models.Dto.Job;
+using Sho8lana.Entities.Models.Dto.Project;
+using Sho8lana.Entities.Models.Dto.Proposal;
+using Sho8lana.Entities.Models.Dto.ProposalAndReplay;
 
-namespace src
+namespace Sho8lana.API
 {
     public class MappingProfile : Profile
     {

@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using src.Data;
-using src.Models;
-using src.Models.Dto.Message;
-using src.Repository;
+using Sho8lana.DataAccess.Data;
+using Sho8lana.Entities.Models;
+using Sho8lana.Entities.Models.Dto.Message;
 using System.Security.Claims;
 
-namespace src.Controllers
+namespace Sho8lana.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
