@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Sho8lana.API.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Sho8lana.Entities.Models;
 using Sho8lana.Entities.Models.Dto.Client;
@@ -79,20 +80,18 @@ namespace Sho8lana.API.Controllers
 				client.ImageUrl = GetImageUrl(client.ImageUrl);
 				return Ok(new Response(200, client));
 			}
-			return BadRequest(new Response(404, ["Client not found"]));
+			throw new NotFoundException("Client not found");
 		}
 
-		[Authorize(Roles = "Client")]
+		[Authorize(Roles = "Admin, Client")]
 		// PUT api/<ClientController>/5
 		[HttpPut("{id}")]
 		public IActionResult Put(string id, [FromForm] UpdateClientDto clientDto)
 		{
-			if (GetId() != id)
-			{
-				return Unauthorized(new Response(StatusCodes.Status203NonAuthoritative, ["Not authorized"]));
-			}
+			if (GetId() != id && GetRole() != "Admin")
+                throw new UnauthorizedAccessException();
 
-			string? imagePath = null;
+            string? imagePath = null;
             if (clientDto.Image != null)
 			{
                 _imageService.DeleteImage(_clientRepo.Read(id)!.ImageUrl);
@@ -107,16 +106,12 @@ namespace Sho8lana.API.Controllers
 		[HttpDelete("{id}")]
 		public IActionResult Delete(string id)
 		{
-			if (GetId() == id || GetRole() == "Admin")
-			{
-                _imageService.DeleteImage(_clientRepo.Read(id)!.ImageUrl);
-                _ = _clientRepo.Delete(id);
-				return Ok(new Response(200));
-			}
-			else
-			{
-				return Unauthorized(new Response(StatusCodes.Status203NonAuthoritative, ["Not authorized"]));
-			}
+			if (GetId() != id || GetRole() != "Admin")
+                throw new UnauthorizedAccessException();
+
+            _imageService.DeleteImage(_clientRepo.Read(id)!.ImageUrl);
+            _ = _clientRepo.Delete(id);
+			return Ok(new Response(200));
 		}
 	}
 }

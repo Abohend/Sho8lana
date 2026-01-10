@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Sho8lana.API.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Sho8lana.Entities.Models;
 using Sho8lana.DataAccess.Repositories;
@@ -53,7 +54,7 @@ namespace Sho8lana.API.Controllers
 			var projectProposal = _projectProposalRepo.Read(projectProposalId);
 			if (projectProposal == null)
 			{
-				return BadRequest(new Response(404, ["Project proposal Id not valid"]));
+				throw new NotFoundException("Project proposal Id not valid");
 			}
 
 			// validating owner of the project proposal "owner of the project"
@@ -61,13 +62,13 @@ namespace Sho8lana.API.Controllers
 			var userId = GetId();
 			if (userId != project!.ClientId)
 			{
-				return BadRequest(new Response(401, ["Only can replay for proposals of your projects"]));
+				throw new UnauthorizedAccessException("Only can replay for proposals of your projects");
 			}
 
 			// valid the project is not replied before
 			if (projectProposal.ProposalReplay != null)
 			{
-				return BadRequest(new Response(401, ["This project has been responded before"]));
+				throw new BadRequestException("This project has been responded before");
 			}
 
 			// Psuado Payment
@@ -102,13 +103,13 @@ namespace Sho8lana.API.Controllers
 
 			if (job == null)
 			{
-				return BadRequest(new Response(401, ["Invalid job proposal Id"]));
+				throw new NotFoundException("Invalid job proposal Id");
 			}
 
 			// validating that he's the proposal reciever
 			if (GetId() != job.FreelancerId)
 			{
-				return BadRequest(new Response(401, ["You cann't reply to a proposal you didn't own"]));
+				throw new UnauthorizedAccessException("You cann't reply to a proposal you didn't own");
 			}
 
 			_proposalReplayRepo.Create(replayDto, jobProposalId);

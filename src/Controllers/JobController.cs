@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Sho8lana.Entities.Models;
+using Sho8lana.API.Exceptions;
 using Sho8lana.DataAccess.Repositories;
+using Sho8lana.Entities.Models;
 using Sho8lana.Entities.Models.Dto.Job;
+using System.Security.Claims;
 
 namespace Sho8lana.API.Controllers
 {
@@ -34,17 +35,13 @@ namespace Sho8lana.API.Controllers
 		public IActionResult Get(int projectId)
 		{
 			// make sure the authorized user is the owner of the project
-			var project = _projectRepo.Read(projectId);
-			if (project == null)
-			{
-				return NotFound(new Response(404, ["Invalid project Id"]));
-			}
-			else if (_projectRepo.ReadProjectTakerId(projectId) != GetId())
-			{
-				return BadRequest(new Response(401, ["Not authorized to Get jobs from this project."]));
-			}
+			var project = _projectRepo.Read(projectId)
+				?? throw new NotFoundException("Project Id not found"); 
 
-			var jobs = _jobRepo.ReadAll(projectId);
+			if (_projectRepo.ReadProjectTakerId(projectId) != GetId())
+                throw new UnauthorizedAccessException();
+
+            var jobs = _jobRepo.ReadAll(projectId);
 			return Ok(new Response(200, jobs));
 		}
 
@@ -57,7 +54,7 @@ namespace Sho8lana.API.Controllers
 			// make sure that freelancer is getting his own data
 			if (freelancerId != GetId())
 			{
-				return BadRequest(new Response(401, "Invalid freelancer Id"));
+				throw new UnauthorizedAccessException("Invalid freelancer Id");
 			}
 			var jobs = _jobRepo.ReadAll(freelancerId);
 			return Ok(new Response(200, jobs));
@@ -68,18 +65,14 @@ namespace Sho8lana.API.Controllers
 		[HttpPost("{projectId}")]
 		public IActionResult Post(int projectId, [FromBody] List<CreateJobDto> JobsDto)
 		{
-			// make sure the authorized user is the owner of the project
-			var project = _projectRepo.Read(projectId);
-			if (project == null)
-			{
-				return NotFound(new Response(404, ["Invalid project Id"]));
-			}
-			else if (_projectRepo.ReadProjectTakerId(projectId) != GetId())
-			{
-				return BadRequest(new Response(401, ["Not authorized to add jobs to this project."]));
-			}
+			var project = _projectRepo.Read(projectId)
+                ?? throw new NotFoundException("Project Id not found");
 
-			_jobRepo.Create(projectId, JobsDto);
+			// make sure the authorized user is the owner of the project
+            if (_projectRepo.ReadProjectTakerId(projectId) != GetId())
+                throw new UnauthorizedAccessException();
+
+            _jobRepo.Create(projectId, JobsDto);
 			return Ok(new Response(201, JobsDto));
 		}
 
@@ -90,21 +83,18 @@ namespace Sho8lana.API.Controllers
 			// only allowed for freelancer who created it and must sure that no freelancer is assigned to it
 			var job = _jobRepo.Read(id);
 			if (_projectRepo.ReadProjectTakerId(job.ProjectId) != GetId())
-			{
-				return BadRequest(new Response(401, ["Invalid Job Id"]));
-			}
+				throw new UnauthorizedAccessException("Invalid Job Id");
+
 			else if (_jobRepo.ReadJobTakerId(id) != null)
-			{
-				return BadRequest(new Response(401, ["Not authorized to delete jobs that is already assigned to freelancers"]));
+                throw new UnauthorizedAccessException();
 
-			}
 
-			var result = _jobRepo.Delete(id);
+            var result = _jobRepo.Delete(id);
 			if (result)
 			{
 				return Ok(new Response(200));
 			}
-			return BadRequest(new Response(400, ["Something went wrong!"]));
+			throw new BadRequestException("Something went wrong!");
 		}
 	
 	}

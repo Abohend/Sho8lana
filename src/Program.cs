@@ -10,6 +10,7 @@ using Sho8lana.Entities.Models;
 using Sho8lana.DataAccess.Repositories;
 using System.Text;
 using Sho8lana.API.Hubs;
+using Sho8lana.API.Middleware;
 
 namespace Sho8lana.API
 {
@@ -212,6 +213,8 @@ namespace Sho8lana.API
 			app.UseStaticFiles();
 
 			app.UseCors("PublicPolicy");
+
+			app.UseMiddleware<ExceptionMiddleware>();
 
 			app.UseAuthentication();
 

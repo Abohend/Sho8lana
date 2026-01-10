@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sho8lana.API.Exceptions;
 using Sho8lana.DataAccess.Repositories;
-using System.Security.Claims;
 using Sho8lana.Entities.Models;
 using Sho8lana.Entities.Models.Dto.Proposal;
+using System.Security.Claims;
 
 namespace Sho8lana.API.Controllers
 {
@@ -40,20 +41,15 @@ namespace Sho8lana.API.Controllers
 		public IActionResult Get(int jobId)
 		{
 			// Invalid job Id check
-			var job = _jobRepo.Read(jobId);
-			if (job == null)
-			{
-				return NotFound(new Response(404, ["Job Id is invalid"]));
-			}
+			var job = _jobRepo.Read(jobId)
+                ?? throw new NotFoundException("Job Id not found");
 
-			// Owner of project check
-			var projectOwnerId = _projectRepo.ReadProjectTakerId(job.ProjectId);
+            // Owner of project check
+            var projectOwnerId = _projectRepo.ReadProjectTakerId(job.ProjectId);
 			if (projectOwnerId != GetId())
-			{
-				return BadRequest(new Response(401, ["Not authorized to access job proposals of a project you didn't take"]));
-			}
+                throw new UnauthorizedAccessException("Not authorized to access job proposals of a project you didn't take");
 
-			var proposals = _jobProposalRepo.ReadAll(jobId);
+            var proposals = _jobProposalRepo.ReadAll(jobId);
 			return Ok(new Response(200, proposals));
 		}
 
@@ -76,13 +72,11 @@ namespace Sho8lana.API.Controllers
 			var job = _jobRepo.Read(jobId);
 			if (job == null)
 			{
-				return BadRequest(new Response(404, ["specified job not found"]));
+				throw new NotFoundException("specified job not found");
 			}
 			var projectTakerId = _projectRepo.ReadProjectTakerId(job.ProjectId);
-			if ( projectTakerId != GetId() )
-			{
-				return BadRequest(new Response(401, ["Not authorized to create proposals for job of a project you don't own"]));
-			}
+			if (projectTakerId != GetId())
+				throw new UnauthorizedAccessException("Not authorized to create proposals for job of a project you don't own");
 
 			//TODO: Payment "current is simple"
 			//var senderFreelancer = _freelancerRepo.Read(projectTakerId);
@@ -105,18 +99,14 @@ namespace Sho8lana.API.Controllers
 		[HttpDelete("{id}")]
 		public IActionResult Delete(int id)
 		{
-			// check owner of project 
-			var proposal = _jobProposalRepo.Read(id);
-			if (proposal == null)
-			{
-				return NotFound(new Response(404, ["Proposal Id is invalid"]));
-			}
-			else if (proposal.FreelancerId != GetId() || proposal.ProposalReplay?.IsAccepted == true)
-			{
-				return BadRequest(new Response(401, ["Not authorized to delete this proposal"]));
-			}
+			var proposal = _jobProposalRepo.Read(id)
+                ?? throw new NotFoundException("Proposal Id not found");
 
-			_jobProposalRepo.Delete(id);
+			// check owner of project 
+            if (proposal.FreelancerId != GetId() || proposal.ProposalReplay?.IsAccepted == true)
+                throw new UnauthorizedAccessException();
+
+            _jobProposalRepo.Delete(id);
 			return Ok(new Response(200));
 		}
 	}

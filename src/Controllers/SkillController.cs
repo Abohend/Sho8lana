@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Sho8lana.API.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sho8lana.Entities.Models;
@@ -37,7 +38,7 @@ namespace Sho8lana.API.Controllers
 			var skill = _mapper.Map<SkillDto>(_skillRepo.ReadById(id));
 			if (skill != null)
 				return Ok(new Response(200, skill));
-			return BadRequest(new Response(404, "Skill not found"));
+			throw new NotFoundException("Skill not found");
 		}
 
 		// POST api/<SkillController>
@@ -51,7 +52,7 @@ namespace Sho8lana.API.Controllers
 			}
 			else
 			{
-				return BadRequest(new Response(400, ["Skill already exists"]));
+				throw new BadRequestException("Skill already exists");
 			}
 		}
 
@@ -68,7 +69,7 @@ namespace Sho8lana.API.Controllers
 			}
 			else
 			{
-				return BadRequest(new Response(404, ["Skill not found"]));
+				throw new NotFoundException("Skill not found");
 			}
 		}
 
@@ -83,7 +84,7 @@ namespace Sho8lana.API.Controllers
 			}
 			else
 			{
-				return BadRequest(new Response(404, ["Skill not found"]));
+				throw new NotFoundException("Skill not found");
 			}
 		}   
 	}

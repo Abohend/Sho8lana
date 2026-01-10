@@ -66,7 +66,7 @@ namespace Sho8lana.DataAccess.Repositories
 				.Include(j => j.Proposals)!
 				.ThenInclude(p => p.ProposalReplay)
 				.First(j => j.Id == jobId);
-			if (job.Proposals != null && job.Proposals.First(p => p.ProposalReplay?.IsAccepted == true) != null)
+			if (job.Proposals?.Count > 0 && job.Proposals.First(p => p.ProposalReplay?.IsAccepted == true) != null)
 			{
 				return job.Proposals.First(p => p.ProposalReplay?.IsAccepted == true).FreelancerId;
 			}

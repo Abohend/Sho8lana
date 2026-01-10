@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sho8lana.Entities.Models;
+using Sho8lana.API.Exceptions;
 using Sho8lana.DataAccess.Repositories;
+using Sho8lana.Entities.Models;
 using System.Security.Claims;
 
 namespace Sho8lana.API.Controllers
@@ -40,14 +41,12 @@ namespace Sho8lana.API.Controllers
             // ensure project existance
             var project = _projectRepo.Read(projectId);
             if (project == null)
-                return BadRequest(new Response(400, ["Invalid Project Id"]));
+                throw new NotFoundException("Invalid Project Id");
 
             // either project owner or freelancer who took the project can view the delivered product
             else if ((GetRole() == "Client" && GetId() != project.ClientId) &&
                 (GetRole() == "Freelancer" && GetId() != _projectRepo.ReadProjectTakerId(projectId)))
-            {
-                return Unauthorized(new Response(401, ["Not Allowed to Update this Project"]));
-            }
+                throw new UnauthorizedAccessException();
 
             return Ok(new Response(200, _productRepo.ReadProjectProduct(projectId)));
         }
@@ -59,13 +58,11 @@ namespace Sho8lana.API.Controllers
             // ensure job existance
             var job = _jobRepo.Read(jobId);
             if (job == null)
-                return BadRequest(new Response(400, ["Invalid Job Id"]));
+                throw new NotFoundException("Invalid Job Id");
 
             // either job owner or freelancer who took the job can view the delivered product
             else if (GetRole() == "Freelancer" && (GetId() != _jobRepo.ReadJobTakerId(jobId) || GetId() != _jobRepo.ReadJobOwnerId(jobId)) || GetRole() == "Client")
-            {
-                return Unauthorized(new Response(401, ["Not Allowed to Update this Job"]));
-            }
+                throw new UnauthorizedAccessException();
 
             return Ok(new Response(200, _productRepo.ReadJobProduct(jobId)));
         }
@@ -79,24 +76,22 @@ namespace Sho8lana.API.Controllers
             var freelancerId = GetId();
             var project = _projectRepo.Read(projectId);
             if (project == null)
-                return BadRequest(new Response(400, ["Invalid Project Id"]));
+                throw new NotFoundException("Invalid Project Id");
 
             // check project taker
             else if (_projectRepo.ReadProjectTakerId(projectId) != freelancerId)
-            {
-                return Unauthorized(new Response(401, ["Not Allowed to Update this Project"]));
-            }
+                throw new UnauthorizedAccessException();
 
             // check if product already exists for this project
             if (_productRepo.ReadProjectProduct(projectId) != null)
             {
-                return BadRequest(new Response(400, ["Product already delivered for this project"]));
+                throw new BadRequestException("Product already delivered for this project");
             }
             
             // make sure the variable GitHubUrl is url of a valid github repository
             if (!Uri.IsWellFormedUriString(GitHubUrl, UriKind.RelativeOrAbsolute) && GitHubUrl.ToLower().Contains("github.com"))
             {
-                return BadRequest(new Response(400, ["Invalid GitHub Url"]));
+                throw new BadRequestException("Invalid GitHub Url");
             }
 
             _productRepo.CreateProjectProduct(projectId, GitHubUrl);
@@ -112,24 +107,22 @@ namespace Sho8lana.API.Controllers
             var freelancerId = GetId();
             var job = _jobRepo.Read(jobId);
             if (job == null)
-                return BadRequest(new Response(400, ["Invalid Job Id"]));
+                throw new NotFoundException("Invalid Job Id");
 
             // check job taker
             else if (_jobRepo.ReadJobTakerId(jobId) != freelancerId)
-            {
-                return Unauthorized(new Response(401, ["Not Allowed to Update this Job"]));
-            }
+                throw new UnauthorizedAccessException();
 
             // check if job already exists for this project
             if (_productRepo.ReadJobProduct(jobId) != null)
             {
-                return BadRequest(new Response(400, ["Product already delivered for this job"]));
+                throw new BadRequestException("Product already delivered for this job");
             }
             
             // make sure the variable GitHubUrl is url of a valid github repository
             if (!Uri.IsWellFormedUriString(GitHubUrl, UriKind.RelativeOrAbsolute) && GitHubUrl.ToLower().Contains("github.com"))
             {
-                return BadRequest(new Response(400, ["Invalid GitHub Url"]));
+                throw new BadRequestException("Invalid GitHub Url");
             }
 
             _productRepo.CreateJobProduct(jobId, GitHubUrl);
@@ -151,16 +144,11 @@ namespace Sho8lana.API.Controllers
 
             // verify the owner of the job
             else if (_jobRepo.ReadJobOwnerId(jobId) != freelancerId)
-            {
-                return Unauthorized(new Response(401, ["Not Allowed to Update this Job"]));
-            }
+                throw new UnauthorizedAccessException();
 
             // ensure product existance
-            var product = _productRepo.ReadJobProduct(jobId);
-            if (product == null)
-            {
-                return NotFound(new Response(404, ["Delivered product for this job not found"]));
-            }
+            var product = _productRepo.ReadJobProduct(jobId)
+                ?? throw new NotFoundException("Delivered Product for this job not found");
 
             _productRepo.VerifyJobProduct(jobId);
 
@@ -176,20 +164,15 @@ namespace Sho8lana.API.Controllers
             // check project existance
             var project = _projectRepo.Read(projectId);
             if (project == null)
-                return BadRequest(new Response(400, ["Invalid Project Id"]));
+                throw new NotFoundException("Invalid Project Id");
 
             // verify the owner of the project
             if (GetId() != project.ClientId)
-            {
-                return Unauthorized(new Response(401, ["Not Allowed to Update this Project"]));
-            }
+                throw new UnauthorizedAccessException();
 
             // ensure product existance
-            var product = _productRepo.ReadProjectProduct(projectId);
-            if (product == null)
-            {
-                return NotFound(new Response(404, ["Delivered product for this job not found"]));
-            }
+            var product = _productRepo.ReadProjectProduct(projectId)
+                ?? throw new NotFoundException("Delivered Product for this job not found");
 
             _productRepo.VerifyProjectProduct(projectId);
 

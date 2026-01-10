@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sho8lana.Entities.Models;
+using Sho8lana.API.Exceptions;
 using Sho8lana.DataAccess.Repositories;
-using System.Security.Claims;
+using Sho8lana.Entities.Models;
 using Sho8lana.Entities.Models.Dto.Proposal;
+using System.Security.Claims;
 
 namespace Sho8lana.API.Controllers
 {
@@ -39,18 +40,13 @@ namespace Sho8lana.API.Controllers
 		[HttpGet("{projectId:int}")]
 		public IActionResult Get(int projectId)
 		{
-			// Invalid project Id check
-			var project = _projectRepo.Read(projectId);
-			if (project == null)
-			{
-				return NotFound(new Response(404, ["Project Id is invalid"]));
-			}
+            // Invalid project Id check
+            var project = _projectRepo.Read(projectId)
+                ?? throw new NotFoundException("Project Id is invalid");
 
 			// Owner of project check
 			if (project.ClientId != GetId())
-			{
-				return BadRequest(new Response(401, ["Not authorized to respond to this project data"]));
-			}
+				throw new UnauthorizedAccessException();
 
 			var proposal = _projectProposalRepo.ReadAll(projectId);
 			return Ok(new Response(200, proposal));
@@ -81,12 +77,12 @@ namespace Sho8lana.API.Controllers
 			
 			if (project == null)
 			{
-				return BadRequest(new Response(404, ["Invalid Project Id"]));
+				throw new NotFoundException("Invalid Project Id");
 			}
 
 			else if (freelancer!.CategoryId != project.CategoryId)
 			{
-				return BadRequest(new Response(404, ["Cann't take a project not in your category"]));
+				throw new BadRequestException("Cann't take a project not in your category");
 			}
 
 			projectProposalDto.FreelancerId = freelancerId;
@@ -101,15 +97,10 @@ namespace Sho8lana.API.Controllers
 		public IActionResult Delete(int id)
 		{
 			// check owner of project 
-			var proposal = _projectProposalRepo.Read(id);
-			if (proposal == null)
-			{
-				return NotFound(new Response(404, ["Proposal Id is invalid"]));
-			}
-			else if (proposal.FreelancerId != GetId() || proposal.ProposalReplay != null)
-			{
-				return BadRequest(new Response(401, ["Not authorized to delete this proposal"]));
-			}
+			var proposal = _projectProposalRepo.Read(id)
+				?? throw new NotFoundException("Proposal Id not found");
+			if (proposal.FreelancerId != GetId() || proposal.ProposalReplay != null)
+				throw new UnauthorizedAccessException();
 
 			_projectProposalRepo.Delete(id);
 			return Ok(new Response(200));

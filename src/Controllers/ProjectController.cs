@@ -1,194 +1,175 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sho8lana.Entities.Models;
+using Sho8lana.API.Exceptions;
 using Sho8lana.DataAccess.Repositories;
-using System.Security.Claims;
+using Sho8lana.Entities.Models;
 using Sho8lana.Entities.Models.Dto.Project;
+using System.Security.Claims;
 
 
 namespace Sho8lana.API.Controllers
 {
     //[Authorize(Roles = "Client")]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class ProjectController : ControllerBase
-	{
-		private readonly ProjectRepository _projectRepo;
-		private readonly CategoryRepository _categoryRepo;
-		private readonly SkillRepository _skillRepo;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProjectController : ControllerBase
+    {
+        private readonly ProjectRepository _projectRepo;
+        private readonly CategoryRepository _categoryRepo;
+        private readonly SkillRepository _skillRepo;
 
-		public ProjectController(ProjectRepository projectRepo, 
-			CategoryRepository categoryRepo,
-			SkillRepository skillRepository)
-		{
-			_projectRepo = projectRepo;
-			_categoryRepo = categoryRepo;
-			this._skillRepo = skillRepository;
-		}
+        public ProjectController(ProjectRepository projectRepo,
+            CategoryRepository categoryRepo,
+            SkillRepository skillRepository)
+        {
+            _projectRepo = projectRepo;
+            _categoryRepo = categoryRepo;
+            this._skillRepo = skillRepository;
+        }
 
-		#region Helpers
-		private string GetRole()
-		{
-			return User.FindFirst(ClaimTypes.Role)!.Value.ToLower();
-		}
-		private string GetId()
-		{
-			return User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-		}
-		#endregion
+        #region Helpers
+        private string GetRole()
+        {
+            return User.FindFirst(ClaimTypes.Role)!.Value.ToLower();
+        }
+        private string GetId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        }
+        #endregion
 
 
-		// GET: api/<ProjectController>
-		[AllowAnonymous]
-		[HttpGet]
-		public IActionResult Get()
-		{
-			try
-			{
-				var projects = _projectRepo.ReadAll();
-				return Ok(new Response(200, result: projects));
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+        // GET: api/<ProjectController>
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var projects = _projectRepo.ReadAll();
+            return Ok(new Response(200, result: projects));
+        }
 
-		// GET api/<ProjectController>/5
-		[AllowAnonymous]
-		[HttpGet("{id:int}")]
-		public IActionResult Get(int id)
-		{
-			var project = _projectRepo.ReadWithSkills(id);
-			if (project == null)
-			{
-				return NotFound(new Response(404, ["Project not found"]));
-			}
-			return Ok(new Response(200, project));
-		}		
-		
-		[AllowAnonymous]
-		[HttpGet("{name}")]
-		public IActionResult GetByName(string name)
-		{
-			var projects = _projectRepo.ReadWithSkills(name);
-			return Ok(new Response(200, projects));
-		}
+        // GET api/<ProjectController>/5
+        [AllowAnonymous]
+        [HttpGet("{id:int}")]
+        public IActionResult Get(int id)
+        {
+            var project = _projectRepo.ReadWithSkills(id)
+                ?? throw new NotFoundException("Project Id not found");
+            return Ok(new Response(200, project));
+        }
 
-        [Authorize(Roles = "Freelancer")]
+        [AllowAnonymous]
+        [HttpGet("{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var projects = _projectRepo.ReadWithSkills(name);
+            return Ok(new Response(200, projects));
+        }
+
+        [Authorize(Roles = "Freelancer, Admin")]
         [HttpGet("freelancer/{freelancerId}")]
-		// return all project for a freelancer
-		public IActionResult Get(string freelancerId)
-		{
-			if (GetId() != freelancerId)
-			{
-				return BadRequest(new Response(401, ["You are not allowed to view projects of other freelancers"]));
-			}
-			var projects = _projectRepo.ReadAll(freelancerId);
-			return Ok(new Response(200, projects));
-		}
+        // return all project for a freelancer
+        public IActionResult Get(string freelancerId)
+        {
+            if (GetId() != freelancerId)
+            {
+                throw new UnauthorizedAccessException("You are not allowed to view projects of other freelancers");
+            }
+            var projects = _projectRepo.ReadAll(freelancerId);
+            return Ok(new Response(200, projects));
+        }
 
         //POST api/<ProjectController>
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client, Admin")]
         [HttpPost]
-		public IActionResult Post([FromBody] CreateProjectDto projectDto)
-		{
-			// check Category
-			var category = _categoryRepo.Get(projectDto.CategoryId);
-			if (category == null)
-			{
-				return BadRequest(new Response(404, ["Category id is not valid"]));
-			}
+        public IActionResult Post([FromBody] CreateProjectDto projectDto)
+        {
+            // check Category
+            var category = _categoryRepo.Get(projectDto.CategoryId);
+            if (category == null)
+            {
+                throw new NotFoundException("Category id is not valid");
+            }
 
-			List<Skill>? skills = null;
+            List<Skill>? skills = null;
 
-			if (projectDto.RequiredSkillsId != null)
-			{
-				skills = new List<Skill>();
-				foreach (var skillId in projectDto.RequiredSkillsId)
-				{
-					var skill = _skillRepo.ReadById(skillId);
-					if (skill == null)
-					{
-						return BadRequest(new Response(404, ["Enter valid skills"]));
-					}
-					else
-					{
-						skills.Add(skill);
-					}
-				}
-			}
+            if (projectDto.RequiredSkillsId != null)
+            {
+                skills = new List<Skill>();
+                foreach (var skillId in projectDto.RequiredSkillsId)
+                {
+                    var skill = _skillRepo.ReadById(skillId);
+                    if (skill == null)
+                    {
+                        throw new NotFoundException("Enter valid skills");
+                    }
+                    else
+                    {
+                        skills.Add(skill);
+                    }
+                }
+            }
 
-			//ToDo disable automapping for category and assign categoryId here.
-			_projectRepo.Create(GetId(), skills, projectDto);
-			return Ok(new Response(201));
-		}
+            //ToDo disable automapping for category and assign categoryId here.
+            _projectRepo.Create(GetId(), skills, projectDto);
+            return Ok(new Response(201));
+        }
 
 
         // PUT api/<ProjectController>/5
         [Authorize(Roles = "Client")]
         [HttpPut("{id}")]
-		public IActionResult Put(int id, [FromBody] CreateProjectDto projectDto)
-		{
-			// check category existence
-			var category = _categoryRepo.Get(projectDto.CategoryId);
-			if (category == null)
-			{
-				return BadRequest(new Response(404, ["Category id is not valid"]));
-			}
-			try
-			{
-				var project = _projectRepo.Read(id);
-				if (project == null)
-					return NotFound(new Response(404, ["Project not found"]));
+        public IActionResult Put(int id, [FromBody] CreateProjectDto projectDto)
+        {
+            // TODO authorize
+            // check category existence
+            var category = _categoryRepo.Get(projectDto.CategoryId);
+            if (category == null)
+            {
+                throw new NotFoundException("Category id is not valid");
+            }
 
-				// check the updator
-				if (GetRole() == "Client" && GetId() != project.ClientId)
-				{
-					return Unauthorized(new Response(401, ["Not Allowed to Update this Project"]));
-				}
+            var project = _projectRepo.Read(id)
+            ?? throw new NotFoundException("Project Id not found");
 
-				// validating skills id
-				foreach (var skillId in projectDto.RequiredSkillsId!)
-				{
-					var skill = _skillRepo.ReadById(skillId);
-					if (skill == null)
-					{
-						return BadRequest(new Response(404, ["Enter valid skills"]));
-					}
-				}
+            // check the updator
+            if (GetRole() == "Client" && GetId() != project.ClientId)
+                throw new UnauthorizedAccessException();
 
-				var result = _projectRepo.Update(id, projectDto);
+            // validating skills id
+            foreach (var skillId in projectDto.RequiredSkillsId!)
+            {
+                var skill = _skillRepo.ReadById(skillId);
+                if (skill == null)
+                {
+                    throw new NotFoundException("Enter valid skills");
+                }
+            }
 
-				return Ok(new Response(201));
-			}
-			catch (Exception e)
-			{
-				return BadRequest(new Response(400, [e.ToString()]));
-			}
-		}
+            var result = _projectRepo.Update(id, projectDto);
+
+            return Ok(new Response(201));
+
+        }
 
 
-		// DELETE api/<ProjectController>/5
-		[Authorize(Roles = "Admin, Client")]
-		[HttpDelete("{id}")]
-		public IActionResult Delete(int id)
-		{
-			var project = _projectRepo.Read(id);
-			if (project == null)
-			{
-				return NotFound(new Response(404, ["Project not found"]));
-			}
-			// if client
-			else if (GetRole() == "Client" && GetId() != project.ClientId)
-			{
-				return Unauthorized(new Response(401, ["Not Allowed to Delete this Project"]));
-			}
-			else
-			{
-				_ = _projectRepo.Delete(id);
-				return Ok(new Response(200));
-			}
-		}
-	}
+        // DELETE api/<ProjectController>/5
+        [Authorize(Roles = "Admin, Client")]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var project = _projectRepo.Read(id)
+                ?? throw new NotFoundException("Project Id not found");
+
+            // if client
+            if (GetRole() == "Client" && GetId() != project.ClientId)
+                throw new UnauthorizedAccessException();
+
+            else
+            {
+                _ = _projectRepo.Delete(id);
+                return Ok(new Response(200));
+            }
+        }
+    }
 }
